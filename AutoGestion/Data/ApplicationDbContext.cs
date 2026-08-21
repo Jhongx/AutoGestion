@@ -17,6 +17,7 @@ namespace AutoGestion.Data
         public DbSet<FuelLevel> FuelLevels { get; set; }
         public DbSet<ReceivingOrder> ReceivingOrders => Set<ReceivingOrder>();
         public DbSet<Inventory> Inventories => Set<Inventory>();
+        public DbSet<InspectionAppointment> InspectionAppointments => Set<InspectionAppointment>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,6 +59,12 @@ namespace AutoGestion.Data
             modelBuilder.Entity<Vehicle>()
                 .Property(v => v.Transmission)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<InspectionAppointment>()
+            .HasOne(a => a.Client)
+            .WithMany()
+            .HasForeignKey(a => a.ClientId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

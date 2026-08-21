@@ -3,6 +3,7 @@ using System;
 using AutoGestion.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoGestion.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260821052407_AddEstimatedDuration")]
+    partial class AddEstimatedDuration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
@@ -120,14 +123,11 @@ namespace AutoGestion.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateOnly>("AppointmentDate")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("ClientId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("EstimatedDurationMinutes")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("InspectionType")
                         .IsRequired()
@@ -141,7 +141,7 @@ namespace AutoGestion.Migrations
                     b.Property<int?>("ReceivingOrderId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<TimeOnly>("StartTime")
+                    b.Property<DateTime>("ScheduledDateTime")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
