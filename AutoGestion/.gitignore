@@ -1,0 +1,36 @@
+## --- Archivos y carpetas de compilación de .NET ---
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+build/
+dist/
+
+## --- Archivos temporales e internos de Visual Studio / VS Code ---
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.dbmdl
+*.cache
+*.exe
+*.dll
+*.pdb
+
+## --- Archivos de configuración local y datos sensibles ---
+appsettings.Development.json
+appsettings.Local.json
+*.env
+
+## --- Paquetes y dependencias ---
+*.nupkg
+packages/
+node_modules/
+
+## --- Archivos del sistema operativo ---
+.DS_Store
+Thumbs.db
+desktop.ini

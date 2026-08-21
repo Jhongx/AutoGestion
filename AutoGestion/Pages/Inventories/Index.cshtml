@@ -1,0 +1,222 @@
+@page
+@model AutoGestion.Pages.InventoryPages.IndexModel
+
+@{
+    ViewData["Title"] = "Inventario de Repuestos y Materiales";
+}
+
+<div class="container-fluid px-4 py-3">
+    <!-- Header principal -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 text-dark fw-bold m-0">Gestión de Inventario</h1>
+            <p class="text-muted mb-0">Control de stock, repuestos y precios de insumos del taller</p>
+        </div>
+        <a asp-page="Create" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 shadow-sm">
+            <i class="bi bi-plus-circle-fill"></i>
+            <span>Nuevo Repuesto / Insumo</span>
+        </a>
+    </div>
+
+    <!-- Tarjetas KPI / Resumen -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-primary border-4 rounded-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">Total Ítems</span>
+                            <h3 class="fw-bold mb-0 mt-1">@Model.Inventory.Count</h3>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                            <i class="bi bi-box-seam fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-warning border-4 rounded-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">Stock Bajo (&le; 5)</span>
+                            <h3 class="fw-bold mb-0 mt-1">
+                                @Model.Inventory.Count(x => x.CurrentStock <= 5 && x.CurrentStock > 0)
+                            </h3>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
+                            <i class="bi bi-exclamation-triangle fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-danger border-4 rounded-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">Agotados</span>
+                            <h3 class="fw-bold mb-0 mt-1">
+                                @Model.Inventory.Count(x => x.CurrentStock <= 0)
+                            </h3>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-circle">
+                            <i class="bi bi-x-circle fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Inventario -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <!-- Header con Buscador -->
+        <div class="card-header bg-white py-3 border-bottom border-light">
+            <div class="row align-items-center g-3">
+                <div class="col-md-6">
+                    <h5 class="card-title text-dark fw-bold mb-0">Catálogo de Productos</h5>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control bg-light border-start-0 ps-0" placeholder="Buscar por código o nombre de repuesto...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-secondary text-uppercase small border-bottom">
+                    <tr>
+                        <th class="ps-4 py-3" style="width: 140px;">Código</th>
+                        <th class="py-3">Descripción / Repuesto</th>
+                        <th class="py-3" style="width: 160px;">Stock Disponible</th>
+                        <th class="py-3" style="width: 130px;">Costo</th>
+                        <th class="py-3" style="width: 140px;">Precio Venta</th>
+                        <th class="py-3" style="width: 110px;">Estado</th>
+                        <th class="text-end pe-4 py-3" style="width: 140px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Inventory.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-box-seam fs-1 d-block mb-2 text-secondary opacity-50"></i>
+                                <span class="fw-medium">No hay productos ni materiales registrados en inventario.</span>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Inventory)
+                        {
+                            <tr>
+                                <!-- Código de Producto -->
+                                <td class="ps-4 py-3">
+                                    <span class="badge bg-light text-dark border font-monospace px-2 py-1 fs-7">
+                                        <i class="bi bi-barcode me-1 text-secondary"></i>@item.Code
+                                    </span>
+                                </td>
+
+                                <!-- Nombre / Descripción -->
+                                <td class="py-3">
+                                    <div class="fw-bold text-dark">@item.Name</div>
+                                </td>
+
+                                <!-- Stock Actual con Indicador Visual -->
+                                <td class="py-3">
+                                    @if (item.CurrentStock <= 0)
+                                    {
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle px-2.5 py-1 rounded-2">
+                                            <i class="bi bi-x-circle me-1"></i>Agotado (@item.CurrentStock)
+                                        </span>
+                                    }
+                                    else if (item.CurrentStock <= 5)
+                                    {
+                                        <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle px-2.5 py-1 rounded-2">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>@item.CurrentStock unidades
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2.5 py-1 rounded-2">
+                                            <i class="bi bi-check-circle me-1"></i>@item.CurrentStock unidades
+                                        </span>
+                                    }
+                                </td>
+
+                                <!-- Costo -->
+                                <td class="py-3">
+                                    <span class="text-secondary fw-medium">
+                                        @item.Cost.ToString("C2")
+                                    </span>
+                                </td>
+
+                                <!-- Precio Unitario -->
+                                <td class="py-3">
+                                    <span class="fw-semibold text-dark">
+                                        @item.UnitPrice.ToString("C2")
+                                    </span>
+                                </td>
+
+                                <!-- Estado -->
+                                <td class="py-3">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
+                                            Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 rounded-pill">
+                                            Inactivo
+                                        </span>
+                                    }
+                                </td>
+
+                                <!-- Acciones Rápidas -->
+                                <td class="text-end pe-4 py-3">
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Acciones de inventario">
+                                        <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-light border text-body" title="Ver Detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-light border text-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-light border text-danger" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Filtro dinámico en cliente por código o nombre
+        document.getElementById('searchInput')?.addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    </script>
+}

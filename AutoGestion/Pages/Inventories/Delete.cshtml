@@ -1,0 +1,82 @@
+@page "{id:int}"
+@model AutoGestion.Pages.InventoryPages.DeleteModel
+
+@{
+    ViewData["Title"] = "Eliminar Repuesto";
+}
+
+<!-- Encabezado de la Página -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-trash-fill text-danger me-2"></i>Eliminar Repuesto / Insumo
+        </h2>
+        <p class="text-muted small mb-0">Confirma si deseas retirar este elemento del catálogo del taller.</p>
+    </div>
+    <a asp-page="./Index" class="btn btn-outline-secondary fw-semibold shadow-sm">
+        <i class="bi bi-arrow-left me-1"></i> Volver al Catálogo
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Alerta de Confirmación -->
+        <div class="alert alert-warning border-warning d-flex align-items-center gap-3 p-3 mb-4 rounded-3 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-2 text-warning flex-shrink-0"></i>
+            <div>
+                <h6 class="fw-bold mb-1">¿Estás seguro de que deseas eliminar este producto?</h6>
+                <p class="small mb-0 text-secondary">Esta acción eliminará el registro permanentemente del inventario.</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="card-title fw-bold mb-0 text-dark">
+                    <i class="bi bi-box-seam text-danger me-2"></i>Resumen del Elemento
+                </h5>
+                <span class="badge bg-light text-dark border font-monospace px-3 py-1 fs-6">
+                    <i class="bi bi-barcode me-1 text-secondary"></i>@Model.Inventory.Code
+                </span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4 mb-3">
+                    <!-- Nombre / Descripción -->
+                    <div class="col-md-12">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Nombre / Descripción</label>
+                        <span class="fs-5 fw-bold text-dark d-block">@Model.Inventory.Name</span>
+                    </div>
+
+                    <!-- Stock Actual -->
+                    <div class="col-md-6">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Stock Actual</label>
+                        <span class="fs-6 fw-semibold text-dark d-block">
+                            <i class="bi bi-boxes me-1 text-secondary"></i>@Model.Inventory.CurrentStock unidades
+                        </span>
+                    </div>
+
+                    <!-- Precio Unitario -->
+                    <div class="col-md-6">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Precio Unitario</label>
+                        <span class="fs-6 fw-semibold text-dark d-block">
+                            @Model.Inventory.UnitPrice.ToString("C2")
+                        </span>
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+
+                <!-- Formulario de Acción -->
+                <form method="post">
+                    <input type="hidden" asp-for="Inventory.Id" />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-page="./Index" class="btn btn-light border fw-semibold">Cancelar</a>
+                        <button type="submit" class="btn btn-danger fw-semibold px-4 shadow-sm">
+                            <i class="bi bi-trash me-1"></i> Confirmar Eliminación
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

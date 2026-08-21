@@ -1,0 +1,91 @@
+@page
+@model AutoGestion.Pages.ReceivingOrderPages.DeleteModel
+
+@{
+    ViewData["Title"] = $"Eliminar Orden #{Model.ReceivingOrder.Id:D5}";
+}
+
+<div class="container-fluid px-4 py-3">
+    <!-- Breadcrumb & Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-page="./Index" class="text-decoration-none">Recepción de Vehículos</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Eliminar Orden</li>
+                </ol>
+            </nav>
+            <h1 class="h3 text-dark fw-bold m-0">Eliminar Orden de Recepción</h1>
+        </div>
+        <a asp-page="./Index" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+            <i class="bi bi-arrow-left"></i>
+            <span>Volver a la Lista</span>
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Mensaje de Advertencia -->
+            <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center gap-3 mb-4 rounded-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-2 text-warning"></i>
+                <div>
+                    <h5 class="alert-heading fw-bold mb-1">¿Estás seguro de que deseas eliminar esta orden?</h5>
+                    <p class="mb-0 text-secondary">Esta acción eliminará el registro de recepción de forma permanente del sistema.</p>
+                </div>
+            </div>
+
+            <!-- Resumen de la Orden -->
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold text-dark mb-0">
+                        <i class="bi bi-trash text-danger me-2"></i>Orden #@Model.ReceivingOrder.Id.ToString("D5")
+                    </h5>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border px-3 py-2">
+                        @Model.ReceivingOrder.ServiceType
+                    </span>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <span class="text-muted small d-block">Vehículo (Placa)</span>
+                            <span class="fw-bold text-dark fs-6">
+                                @(Model.ReceivingOrder.Vehicle != null ? $"{Model.ReceivingOrder.Vehicle.LicensePlate} - {Model.ReceivingOrder.Vehicle.Brand} {Model.ReceivingOrder.Vehicle.Model}" : "N/A")
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="fw-bold text-dark fs-6">
+                                @Model.ReceivingOrder.DateTime.ToString("dd/MM/yyyy HH:mm")
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="text-muted small d-block">Kilometraje</span>
+                            <span class="text-dark">@Model.ReceivingOrder.Mileage.ToString("N0") km</span>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="text-muted small d-block">Nivel de Combustible</span>
+                            <span class="text-dark">@Model.ReceivingOrder.FuelLevel</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 border">
+                        <span class="text-muted small fw-bold text-uppercase d-block mb-1">Fallas / Observaciones Reportadas</span>
+                        <p class="mb-0 text-dark">@Model.ReceivingOrder.ProblemDescription</p>
+                    </div>
+                </div>
+
+                <!-- Footer con formulario POST de eliminación -->
+                <div class="card-footer bg-light p-3 border-top d-flex justify-content-end gap-2">
+                    <form method="post" class="m-0">
+                        <input type="hidden" asp-for="ReceivingOrder.Id" />
+                        <a asp-page="./Index" class="btn btn-outline-secondary px-4 me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-danger px-4 d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-trash-fill"></i>
+                            <span>Confirmar Eliminación</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,178 @@
+@page
+@model AutoGestion.Pages.ReceivingOrderPages.EditModel
+@{
+    ViewData["Title"] = $"Editar Orden #{Model.ReceivingOrder.Id:D5}";
+}
+
+<div class="container-fluid px-4 py-3">
+    <!-- Breadcrumb & Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-page="./Index" class="text-decoration-none">Recepción de Vehículos</a></li>
+                    <li class="breadcrumb-item"><a asp-page="./Details" asp-route-id="@Model.ReceivingOrder.Id" class="text-decoration-none">Orden #@Model.ReceivingOrder.Id.ToString("D5")</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Editar</li>
+                </ol>
+            </nav>
+            <h1 class="h3 text-dark fw-bold m-0">Editar Orden de Recepción</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-page="./Details" asp-route-id="@Model.ReceivingOrder.Id" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                <i class="bi bi-eye"></i>
+                <span>Ver Detalles</span>
+            </a>
+            <a asp-page="./Index" class="btn btn-light border d-flex align-items-center gap-2">
+                <i class="bi bi-arrow-left"></i>
+                <span>Volver</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="card-title text-dark fw-bold mb-0">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Actualizar Datos de la Orden
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
+                        <input type="hidden" asp-for="ReceivingOrder.Id" />
+
+                        <div class="row g-3 mb-4">
+                            <!-- Selector de Vehículo -->
+                            <div class="col-md-6">
+                                <label asp-for="ReceivingOrder.VehicleId" class="form-label fw-semibold text-dark">Vehículo <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-car-front-fill"></i></span>
+                                    <select id="vehicleSelect" asp-for="ReceivingOrder.VehicleId" class="form-select" asp-items="Model.VehiclesList">
+                                        <option value="">-- Seleccione un vehículo --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="ReceivingOrder.VehicleId" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Info Card del Propietario (Limpia y sutil) -->
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0 h-100 p-2 d-flex justify-content-center" id="clientInfoCard">
+                                    <div class="d-flex align-items-center gap-2 text-muted px-2">
+                                        <i class="bi bi-person-badge fs-4 text-primary"></i>
+                                        <div>
+                                            <small class="d-block fw-semibold text-dark" id="clientNameText">Seleccione un vehículo para ver el propietario</small>
+                                            <small class="text-muted" id="clientPhoneText">---</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tipo de Servicio -->
+                            <div class="col-md-6">
+                                <label asp-for="ReceivingOrder.ServiceType" class="form-label fw-semibold text-dark">Tipo de Servicio <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-tools"></i></span>
+                                    <select asp-for="ReceivingOrder.ServiceType" class="form-select">
+                                        <option value="">-- Seleccione la categoría --</option>
+                                        <option value="Mantenimiento Rutinario">Mantenimiento Rutinario</option>
+                                        <option value="Diagnóstico / Falla Motor">Diagnóstico / Falla Motor</option>
+                                        <option value="Inyección / Laboratorio">Inyección / Laboratorio</option>
+                                        <option value="Electricidad Automotriz">Electricidad Automotriz</option>
+                                        <option value="Aire Acondicionado">Aire Acondicionado</option>
+                                        <option value="Frenos / Suspensión">Frenos / Suspensión</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="ReceivingOrder.ServiceType" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Fecha y Hora de Ingreso -->
+                            <div class="col-md-6">
+                                <label asp-for="ReceivingOrder.DateTime" class="form-label fw-semibold text-dark">Fecha y Hora de Recepción <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-calendar-event"></i></span>
+                                    <input asp-for="ReceivingOrder.DateTime" class="form-control" type="datetime-local" />
+                                </div>
+                                <span asp-validation-for="ReceivingOrder.DateTime" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Kilometraje Actual -->
+                            <div class="col-md-6">
+                                <label asp-for="ReceivingOrder.Mileage" class="form-label fw-semibold text-dark">Kilometraje Actual <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-speedometer2"></i></span>
+                                    <input asp-for="ReceivingOrder.Mileage" class="form-control" placeholder="Ej: 85000" />
+                                    <span class="input-group-text bg-light">km</span>
+                                </div>
+                                <span asp-validation-for="ReceivingOrder.Mileage" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Nivel de Combustible (Enlazado al Catálogo FuelLevel) -->
+                            <div class="col-md-6">
+                                <label asp-for="ReceivingOrder.FuelLevelId" class="form-label fw-semibold text-dark">
+                                    <i class="bi bi-fuel-pump me-1 text-danger"></i>Nivel de Combustible <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-fuel-pump"></i></span>
+                                    <select asp-for="ReceivingOrder.FuelLevelId" class="form-select" asp-items="Model.FuelLevelsList">
+                                        <option value="">-- Seleccione nivel de combustible --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="ReceivingOrder.FuelLevelId" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Estado del Trabajo -->
+                            <div class="col-md-6">
+                                <label asp-for="ReceivingOrder.Status" class="form-label fw-semibold text-dark">Estado del Servicio</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-flag"></i></span>
+                                    <select asp-for="ReceivingOrder.Status" class="form-select">
+                                        <option value="Pendiente">Pendiente</option>
+                                        <option value="En Proceso">En Proceso</option>
+                                        <option value="Completado">Completado</option>
+                                        <option value="Entregado">Entregado</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="ReceivingOrder.Status" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Descripción del Problema -->
+                            <div class="col-12">
+                                <label asp-for="ReceivingOrder.ProblemDescription" class="form-label fw-semibold text-dark">
+                                    Descripción del Problema y Observaciones del Cliente <span class="text-danger">*</span>
+                                </label>
+                                <textarea asp-for="ReceivingOrder.ProblemDescription" class="form-control" rows="3" placeholder="Describa detalladamente las fallas reportadas por el cliente..."></textarea>
+                                <span asp-validation-for="ReceivingOrder.ProblemDescription" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Notas de Diagnóstico Interno -->
+                            <div class="col-12">
+                                <label asp-for="ReceivingOrder.DiagnosticNotes" class="form-label fw-semibold text-dark">
+                                    Observaciones Internas / Inspección de Recepción
+                                </label>
+                                <textarea asp-for="ReceivingOrder.DiagnosticNotes" class="form-control" rows="3" placeholder="Detalles de inspección física, rayones, objetos dejados en el vehículo, etc."></textarea>
+                                <span asp-validation-for="ReceivingOrder.DiagnosticNotes" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a asp-page="./Index" class="btn btn-light px-4">Cancelar</a>
+                            <button type="submit" class="btn btn-primary px-4 d-flex align-items-center gap-2">
+                                <i class="bi bi-save-fill"></i>
+                                <span>Guardar Cambios</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="~/js/ReceivingOrders/ReceivingOrders.js" asp-append-version="true"></script>
+    }
+}

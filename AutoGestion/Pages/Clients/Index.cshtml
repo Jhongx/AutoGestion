@@ -1,0 +1,126 @@
+@page
+@model AutoGestion.Pages.ClientPages.IndexModel
+
+@{
+    ViewData["Title"] = "Gestión de Clientes";
+}
+
+<!-- Encabezado de la Sección -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-people-fill text-primary me-2"></i>Clientes
+        </h2>
+        <p class="text-muted small mb-0">Listado general de propietarios y datos de contacto registrados.</p>
+    </div>
+    <a asp-page="Create" class="btn btn-primary fw-semibold shadow-sm">
+        <i class="bi bi-person-plus-fill me-1"></i> Registrar Cliente
+    </a>
+</div>
+
+<!-- Tarjeta Principal con la Tabla -->
+<div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light border-bottom">
+                    <tr>
+                        <th class="ps-4 py-3">
+                            <i class="bi bi-person me-1"></i> Nombre Completo
+                        </th>
+                        <th class="py-3">
+                            <i class="bi bi-card-heading me-1"></i> Identificación
+                        </th>
+                        <th class="py-3">
+                            <i class="bi bi-telephone me-1"></i> Teléfono Principal
+                        </th>
+                        <th class="py-3">
+                            <i class="bi bi-telephone-plus me-1"></i> Teléfono Secundario
+                        </th>
+                        <th class="py-3">
+                            <i class="bi bi-envelope me-1"></i> Correo Electrónico
+                        </th>
+                        <th class="text-center py-3">
+                            <i class="bi bi-car-front me-1"></i> Vehículos
+                        </th>
+                        <th class="text-end pe-4 py-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Client.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary opacity-50"></i>
+                                No hay clientes registrados en el sistema.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Client)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">
+                                    @Html.DisplayFor(model => item.FullName)
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        @Html.DisplayFor(model => item.Identification)
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="tel:@item.PrimaryPhone" class="text-decoration-none text-dark">
+                                        @Html.DisplayFor(model => item.PrimaryPhone)
+                                    </a>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.SecondaryPhone))
+                                    {
+                                        <a href="tel:@item.SecondaryPhone" class="text-decoration-none text-muted">
+                                            @Html.DisplayFor(model => item.SecondaryPhone)
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted opacity-50 fs-7">N/A</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Email))
+                                    {
+                                        <a href="mailto:@item.Email" class="text-decoration-none text-primary">
+                                            @Html.DisplayFor(model => item.Email)
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted opacity-50 fs-7">N/A</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-2 py-1 rounded-pill fw-semibold">
+                                        @(item.Vehicles?.Count ?? 0) reg.
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-outline-info" title="Detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

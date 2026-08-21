@@ -1,0 +1,195 @@
+@page
+@model AutoGestion.Pages.ReceivingOrderPages.IndexModel
+
+@{
+    ViewData["Title"] = "Recepción de Vehículos";
+}
+
+<div class="container-fluid px-4 py-3">
+    <!-- Header principal -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 text-dark fw-bold m-0">Recepción de Vehículos</h1>
+            <p class="text-muted mb-0">Gestión de órdenes de entrada y diagnóstico de taller</p>
+        </div>
+        <a asp-page="Create" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 shadow-sm">
+            <i class="bi bi-plus-circle-fill"></i>
+            <span>Nueva Orden de Recepción</span>
+        </a>
+    </div>
+
+    <!-- Tarjetas de resumen / KPIs -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-primary border-4 rounded-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">Órdenes Totales</span>
+                            <h3 class="fw-bold mb-0 mt-1">@Model.ReceivingOrder.Count</h3>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                            <i class="bi bi-journal-text fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-success border-4 rounded-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">Ingresos Hoy</span>
+                            <h3 class="fw-bold mb-0 mt-1">
+                                @Model.ReceivingOrder.Count(x => x.DateTime.Date == DateTime.Today)
+                            </h3>
+                        </div>
+                        <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle">
+                            <i class="bi bi-calendar-check fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-warning border-4 rounded-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold">Tipos de Servicio</span>
+                            <h3 class="fw-bold mb-0 mt-1">
+                                @Model.ReceivingOrder.Select(x => x.ServiceType).Distinct().Count()
+                            </h3>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
+                            <i class="bi bi-tools fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Recepción Simplificada -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <!-- Header de la Card con Buscador -->
+        <div class="card-header bg-white py-3 border-bottom border-light">
+            <div class="row align-items-center g-3">
+                <div class="col-md-6">
+                    <h5 class="card-title text-dark fw-bold mb-0">Órdenes de Recepción</h5>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control bg-light border-start-0 ps-0" placeholder="Buscar por orden, placa, vehículo o problema...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido de la Tabla -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-secondary text-uppercase small border-bottom">
+                    <tr>
+                        <th class="ps-4 py-3" style="width: 150px;">N° / Fecha</th>
+                        <th class="py-3" style="width: 220px;">Vehículo</th>
+                        <th class="py-3" style="width: 180px;">Tipo de Servicio</th>
+                        <th class="py-3">Motivo / Problema</th>
+                        <th class="text-end pe-4 py-3" style="width: 140px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.ReceivingOrder.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary opacity-50"></i>
+                                <span class="fw-medium">No hay órdenes de recepción registradas.</span>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.ReceivingOrder)
+                        {
+                            <tr>
+                                <!-- N° Orden y Fecha -->
+                                <td class="ps-4 py-3">
+                                    <div class="fw-bold text-dark">#@item.Id.ToString("D5")</div>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-calendar3 me-1"></i>@item.DateTime.ToString("dd/MM/yyyy")
+                                    </div>
+                                </td>
+
+                                <!-- Vehículo (Marca Modelo + Badge Placa) -->
+                                <td class="py-3">
+                                    @if (item.Vehicle != null)
+                                    {
+                                        <div class="fw-bold text-dark mb-1">
+                                            @item.Vehicle.Brand @item.Vehicle.Model
+                                        </div>
+                                        <span class="badge bg-light text-dark border font-monospace small">
+                                            <i class="bi bi-card-heading me-1 text-secondary"></i>@item.Vehicle.LicensePlate
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Vehículo #@item.VehicleId</span>
+                                    }
+                                </td>
+
+                                <!-- Tipo de Servicio -->
+                                <td class="py-3">
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle rounded-2 px-2 py-1 fw-semibold">
+                                        @item.ServiceType
+                                    </span>
+                                </td>
+
+                                <!-- Motivo / Problema Reportado -->
+                                <td class="py-3">
+                                    <div class="text-truncate text-secondary" style="max-width: 320px;" title="@item.ProblemDescription">
+                                        @(string.IsNullOrWhiteSpace(item.ProblemDescription) ? "Sin observaciones" : item.ProblemDescription)
+                                    </div>
+                                </td>
+
+                                <!-- Acciones Rápidas -->
+                                <td class="text-end pe-4 py-3">
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Acciones de orden">
+                                        <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-light border text-body" title="Ver Detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-light border text-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-light border text-danger" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Búsqueda rápida en cliente
+        document.getElementById('searchInput')?.addEventListener('keyup', function () {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    </script>
+}

@@ -1,0 +1,126 @@
+@page
+@model AutoGestion.Pages.ClientPages.DeleteModel
+
+@{
+    ViewData["Title"] = $"Eliminar Cliente - {Model.Client.FullName}";
+}
+
+<div class="container-fluid px-4 py-3">
+    <!-- Breadcrumb & Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-page="./Index" class="text-decoration-none">Gestión de Clientes</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Eliminar Cliente</li>
+                </ol>
+            </nav>
+            <h1 class="h3 text-dark fw-bold m-0">Eliminar Cliente</h1>
+        </div>
+        <a asp-page="./Index" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+            <i class="bi bi-arrow-left"></i>
+            <span>Volver a la Lista</span>
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Mensaje de Advertencia -->
+            <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center gap-3 mb-4 rounded-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-2 text-warning"></i>
+                <div>
+                    <h5 class="alert-heading fw-bold mb-1">¿Estás seguro de que deseas eliminar este cliente?</h5>
+                    <p class="mb-0 text-secondary">Esta acción eliminará al cliente del registro activo. Verifica que no existan órdenes pendientes vinculadas a sus vehículos.</p>
+                </div>
+            </div>
+
+            <!-- Resumen del Cliente -->
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold text-dark mb-0">
+                        <i class="bi bi-person-x text-danger me-2"></i>@Model.Client.FullName
+                    </h5>
+                    <span class="badge bg-light text-dark border px-3 py-2">
+                        ID / Cédula: @(string.IsNullOrEmpty(Model.Client.Identification) ? "N/A" : Model.Client.Identification)
+                    </span>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="row g-4 mb-3">
+                        <!-- Teléfono Principal -->
+                        <div class="col-md-6">
+                            <span class="text-muted small d-block mb-1">
+                                <i class="bi bi-telephone text-primary me-1"></i> Teléfono Principal
+                            </span>
+                            <span class="fw-bold text-dark fs-6">
+                                @(string.IsNullOrEmpty(Model.Client.PrimaryPhone) ? "No registrado" : Model.Client.PrimaryPhone)
+                            </span>
+                        </div>
+
+                        <!-- Teléfono Secundario -->
+                        <div class="col-md-6">
+                            <span class="text-muted small d-block mb-1">
+                                <i class="bi bi-telephone-plus text-secondary me-1"></i> Teléfono Secundario
+                            </span>
+                            <span class="text-dark fs-6">
+                                @(string.IsNullOrEmpty(Model.Client.SecondaryPhone) ? "N/A" : Model.Client.SecondaryPhone)
+                            </span>
+                        </div>
+
+                        <!-- Correo Electrónico -->
+                        <div class="col-md-12">
+                            <span class="text-muted small d-block mb-1">
+                                <i class="bi bi-envelope text-primary me-1"></i> Correo Electrónico
+                            </span>
+                            <span class="text-dark fs-6">
+                                @(string.IsNullOrEmpty(Model.Client.Email) ? "No registrado" : Model.Client.Email)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Vehículos Registrados -->
+                    <div class="p-3 bg-light rounded-3 border mt-3">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-muted small fw-bold text-uppercase">
+                                <i class="bi bi-car-front-fill text-primary me-1"></i> Vehículos Asociados
+                            </span>
+                            <span class="badge bg-primary rounded-pill">
+                                @(Model.Client.Vehicles != null ? Model.Client.Vehicles.Count : 0)
+                            </span>
+                        </div>
+
+                        @if (Model.Client.Vehicles != null && Model.Client.Vehicles.Any())
+                        {
+                            <ul class="list-inline mb-0">
+                                @foreach (var vehicle in Model.Client.Vehicles)
+                                {
+                                    <li class="list-inline-item me-2 mb-1">
+                                        <span class="badge bg-white text-dark border px-2 py-1">
+                                            @vehicle.LicensePlate (@vehicle.Brand @vehicle.Model)
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="mb-0 text-muted small">Este cliente no tiene vehículos vinculados actualmente.</p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Footer con Formulario POST de Eliminación -->
+                <div class="card-footer bg-light p-3 border-top d-flex justify-content-end gap-2">
+                    <form method="post" class="m-0">
+                        <input type="hidden" asp-for="Client.Id" />
+                        <a asp-page="./Index" class="btn btn-outline-secondary px-4 me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-danger px-4 d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-trash-fill"></i>
+                            <span>Confirmar Eliminación</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

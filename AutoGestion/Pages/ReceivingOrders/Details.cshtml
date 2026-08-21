@@ -1,0 +1,177 @@
+@page
+@model AutoGestion.Pages.ReceivingOrderPages.DetailsModel
+
+@{
+    ViewData["Title"] = $"Orden de Recepción #{Model.ReceivingOrder.Id:D5}";
+}
+
+<div class="container-fluid px-4 py-3">
+    <!-- Breadcrumb & Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-page="./Index" class="text-decoration-none">Recepción de Vehículos</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detalles de Orden</li>
+                </ol>
+            </nav>
+            <h1 class="h3 text-dark fw-bold m-0">Orden de Recepción #@Model.ReceivingOrder.Id.ToString("D5")</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <button onclick="window.print()" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                <i class="bi bi-printer"></i>
+                <span>Imprimir</span>
+            </button>
+            <a asp-page="./Edit" asp-route-id="@Model.ReceivingOrder.Id" class="btn btn-primary d-flex align-items-center gap-2">
+                <i class="bi bi-pencil"></i>
+                <span>Editar Orden</span>
+            </a>
+            <a asp-page="./Index" class="btn btn-light border d-flex align-items-center gap-2">
+                <i class="bi bi-arrow-left"></i>
+                <span>Volver</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm rounded-3">
+                <!-- Card Header Estilo Comprobante -->
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title fw-bold text-dark mb-0">
+                            <i class="bi bi-file-earmark-text text-primary me-2"></i>Comprobante de Ingreso de Vehículo
+                        </h5>
+                        <small class="text-muted">Fecha de registro: @Model.ReceivingOrder.DateTime.ToString("dd/MM/yyyy HH:mm")</small>
+                    </div>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2 fs-6">
+                        @Model.ReceivingOrder.ServiceType
+                    </span>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Fila 1: Información General del Vehículo y Cliente -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6 border-end">
+                            <h6 class="text-uppercase text-muted fw-bold small mb-3">
+                                <i class="bi bi-car-front me-1 text-primary"></i> Datos del Vehículo
+                            </h6>
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4 text-muted">Placa:</dt>
+                                <dd class="col-sm-8 fw-bold text-dark">
+                                    @(Model.ReceivingOrder.Vehicle != null ? Model.ReceivingOrder.Vehicle.LicensePlate : "N/A")
+                                </dd>
+
+                                <dt class="col-sm-4 text-muted">Marca/Modelo:</dt>
+                                <dd class="col-sm-8 text-dark">
+                                    @(Model.ReceivingOrder.Vehicle != null ? $"{Model.ReceivingOrder.Vehicle.Brand} {Model.ReceivingOrder.Vehicle.Model}" : "N/A")
+                                </dd>
+
+                                <dt class="col-sm-4 text-muted">Año:</dt>
+                                <dd class="col-sm-8 text-dark">
+                                    @(Model.ReceivingOrder.Vehicle?.Year.ToString() ?? "N/A")
+                                </dd>
+
+                                <dt class="col-sm-4 text-muted">Transmisión:</dt>
+                                <dd class="col-sm-8 text-dark">
+                                    @(Model.ReceivingOrder.Vehicle?.Transmission.ToString() ?? "N/A")
+                                </dd>
+                            </dl>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h6 class="text-uppercase text-muted fw-bold small mb-3">
+                                <i class="bi bi-person me-1 text-primary"></i> Propietario / Cliente
+                            </h6>
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4 text-muted">Cliente:</dt>
+                                <dd class="col-sm-8 fw-bold text-dark">
+                                    @(Model.ReceivingOrder.Vehicle?.Client != null ? $"{Model.ReceivingOrder.Vehicle.Client.FirstName} {Model.ReceivingOrder.Vehicle.Client.LastName}" : "N/A")
+                                </dd>
+
+                                <dt class="col-sm-4 text-muted">Identificación:</dt>
+                                <dd class="col-sm-8 text-dark">
+                                    @(Model.ReceivingOrder.Vehicle?.Client?.Identification ?? "N/A")
+                                </dd>
+
+                                <dt class="col-sm-4 text-muted">Teléfono:</dt>
+                                <dd class="col-sm-8 text-dark">
+                                    @(Model.ReceivingOrder.Vehicle?.Client?.PrimaryPhone ?? "N/A")
+                                </dd>
+
+                                <dt class="col-sm-4 text-muted">Correo:</dt>
+                                <dd class="col-sm-8 text-dark">
+                                    @(Model.ReceivingOrder.Vehicle?.Client?.Email ?? "N/A")
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Fila 2: Estado Mecánico e Ingreso -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border">
+                                <span class="text-muted small text-uppercase fw-bold d-block mb-1">
+                                    <i class="bi bi-speedometer2 text-primary me-1"></i> Kilometraje de Entrada
+                                </span>
+                                <h4 class="fw-bold text-dark mb-0">@Model.ReceivingOrder.Mileage.ToString("N0") <small class="fs-6 text-muted">km</small></h4>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border">
+                                <span class="text-muted small text-uppercase fw-bold d-block mb-1">
+                                    <i class="bi bi-fuel-pump text-danger me-1"></i> Nivel de Combustible
+                                </span>
+                                <h4 class="fw-bold text-dark mb-0">
+                                    <span class="badge bg-light text-dark border px-3 py-1 fs-6">
+                                        @Model.ReceivingOrder.FuelLevel?.Name
+                                    </span>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fila 3: Observaciones y Fallas Reportadas -->
+                    <div class="mb-2">
+                        <h6 class="text-uppercase text-muted fw-bold small mb-2">
+                            <i class="bi bi-chat-left-text me-1 text-primary"></i> Fallas Reportadas / Observaciones del Cliente
+                        </h6>
+                        <div class="p-3 bg-light rounded-3 border text-dark" style="white-space: pre-line;">
+                            @Model.ReceivingOrder.ProblemDescription
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer para Firmas en la impresión -->
+                <div class="card-footer bg-white p-4 border-top d-none d-print-block">
+                    <div class="row pt-5 mt-4 text-center">
+                        <div class="col-6">
+                            <div class="border-top border-dark mx-4 pt-2 fw-semibold">Firma del Cliente</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border-top border-dark mx-4 pt-2 fw-semibold">Firma Receptor / Taller</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        @@media print {
+            .btn, nav, .d-print-none {
+                display: none !important;
+            }
+
+            .card {
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
+}
