@@ -1,5 +1,60 @@
-.vs/
+## --- Archivos y carpetas de compilación de .NET ---
 [Bb]in/
 [Oo]bj/
-appsettings.Development.json
+[Ll]og/
+[Ll]ogs/
+build/
+dist/
+
+## --- Archivos temporales e internos de Visual Studio / VS Code ---
+.vs/
+.vscode/
+*.suo
 *.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.dbmdl
+*.cache
+*.exe
+*.dll
+*.pdb
+
+## --- Archivos de configuración local y datos sensibles ---
+appsettings.Development.json
+appsettings.Local.json
+*.env
+
+## --- Paquetes y dependencias ---
+*.nupkg
+packages/
+node_modules/
+
+## --- Archivos del sistema operativo ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+
+# Si usas certificados SSL locales exportados para Docker
+*.pfx
+*.crt
+*.key
+
+## --- JetBrains / Rider (por si alguien en el equipo usa Rider) ---
+.idea/
+*.sln.iml
+
+## --- Entity Framework / Migraciones / SQL Server Local ---
+*.mdf
+*.ldf
+*.sqlproj.user
+
+## --- Reportes de Cobertura y Pruebas (.NET Core / MSTest / xUnit) ---
+TestResults/
+*.coverage
+*.coveragexml
+
+## --- Archivos temporales de compilación / Publish local ---
+publish/
+[Pp]ublish/
