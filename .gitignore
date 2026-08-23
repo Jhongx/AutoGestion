@@ -58,3 +58,9 @@ TestResults/
 ## --- Archivos temporales de compilación / Publish local ---
 publish/
 [Pp]ublish/
+
+## --- Configuración de Fly.io ---
+fly.toml
+fly*.toml
+## --- Workflows de GitHub Actions ---
+.github/workflows/fly-deploy.yml
