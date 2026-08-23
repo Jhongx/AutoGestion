@@ -1,0 +1,64 @@
+@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Confirmación de Registro";
+}
+
+<div class="row justify-content-center align-items-center py-2 py-md-4">
+    <div class="col-12 col-md-8 col-lg-6">
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+            <!-- Encabezado -->
+            <div class="card-header bg-dark text-white p-4 border-0"
+                 style="background: linear-gradient(135deg, rgba(13,110,253,0.2) 0%, rgba(33,37,41,1) 100%);">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill fw-semibold small">
+                        <i class="bi bi-check-circle-fill me-1"></i> Cuenta Creada
+                    </span>
+                    <i class="bi bi-wrench-gap-fill text-warning fs-4"></i>
+                </div>
+                <h4 class="fw-bold mb-1">Confirmación de Cuenta</h4>
+                <p class="text-white-50 small mb-0">Verificación de credenciales para el sistema AutoGestión.</p>
+            </div>
+
+            <!-- Cuerpo del Mensaje -->
+            <div class="card-body p-4 p-md-5 bg-white text-center">
+                @{
+                    if (@Model.DisplayConfirmAccountLink)
+                    {
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                            <i class="bi bi-envelope-check-fill fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-2">¡Casi listo!</h5>
+                        <p class="text-muted small mb-4">
+                            En entorno de desarrollo no hay un servicio SMTP de correo configurado. Puedes activar la cuenta directamente presionando el botón a continuación:
+                        </p>
+                        <a id="confirm-link" href="@Model.EmailConfirmationUrl" class="btn btn-primary fw-semibold px-4 py-2 shadow-sm rounded-3 d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-patch-check-fill"></i> Confirmar mi Cuenta
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                            <i class="bi bi-send-check-fill fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-2">Revisa tu bandeja de entrada</h5>
+                        <p class="text-muted small mb-0">
+                            Hemos enviado un correo electrónico de confirmación. Por favor, sigue las instrucciones para activar tu cuenta.
+                        </p>
+                    }
+                }
+            </div>
+
+            <!-- Footer con acceso directo a Login -->
+            <div class="card-footer bg-light border-0 p-3 text-center">
+                <a asp-page="./Login" class="fw-semibold text-primary text-decoration-none small">
+                    <i class="bi bi-arrow-left me-1"></i> Ir al Inicio de Sesión
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
