@@ -1,0 +1,31 @@
+# --- Control de Versiones y Entorno Docker ---
+.git/
+.gitignore
+.dockerignore
+Dockerfile*
+docker-compose*
+fly.toml
+
+# --- Archivos y carpetas de compilación de .NET ---
+**/[Bb]in/
+**/[Oo]bj/
+**/[Ll]og/
+**/[Ll]ogs/
+**/build/
+**/dist/
+
+# --- Entornos de desarrollo y archivos de configuración local ---
+**/.vs/
+**/.vscode/
+**/.idea/
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/*.env
+**/*.user
+**/*.suo
+
+# --- Dependencias y temporales del SO ---
+**/node_modules/
+**/packages/
+**/.DS_Store
+**/Thumbs.db
