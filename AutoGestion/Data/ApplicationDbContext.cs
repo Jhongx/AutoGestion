@@ -1,10 +1,10 @@
 ﻿using AutoGestion.Models;
 using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 namespace AutoGestion.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -21,9 +21,10 @@ namespace AutoGestion.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // 2. OBLIGATORIO: Llama primero a base.OnModelCreating para mapear Identity
             base.OnModelCreating(modelBuilder);
 
-            // Configuración de Índices Únicos
+            // Tus configuraciones existentes se mantienen igual
             modelBuilder.Entity<DocType>()
                 .HasIndex(d => d.Code)
                 .IsUnique();
@@ -31,7 +32,6 @@ namespace AutoGestion.Data
             modelBuilder.Entity<Client>()
                 .HasIndex(c => c.Identification)
                 .IsUnique();
-
 
             modelBuilder.Entity<Vehicle>()
                 .HasIndex(v => v.LicensePlate)
@@ -41,31 +41,27 @@ namespace AutoGestion.Data
                 .HasIndex(i => i.Code)
                 .IsUnique();
 
-            // Configuración de Relación DocType -> Client
             modelBuilder.Entity<Client>()
                 .HasOne(c => c.DocType)
                 .WithMany(d => d.Clients)
                 .HasForeignKey(c => c.DocTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Relación ReceivingOrder -> FuelLevel
             modelBuilder.Entity<ReceivingOrder>()
                 .HasOne(r => r.FuelLevel)
                 .WithMany()
                 .HasForeignKey(r => r.FuelLevelId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configuración de Conversión de Enums a String (Opcional pero muy recomendado para legibilidad en BD)
             modelBuilder.Entity<Vehicle>()
                 .Property(v => v.Transmission)
                 .HasConversion<string>();
 
             modelBuilder.Entity<InspectionAppointment>()
-            .HasOne(a => a.Client)
-            .WithMany()
-            .HasForeignKey(a => a.ClientId)
-            .OnDelete(DeleteBehavior.Restrict);
-
+                .HasOne(a => a.Client)
+                .WithMany()
+                .HasForeignKey(a => a.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
