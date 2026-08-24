@@ -1,0 +1,265 @@
+﻿@page "{id:int}"
+@model AutoGestion.Pages.InspectionAppointments.EditModel
+@{
+    ViewData["Title"] = "Editar Cita de Inspección";
+}
+
+@section Styles {
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="container-fluid px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-page="./Calendar" class="text-decoration-none">Citas & Agenda</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Editar Cita</li>
+                </ol>
+            </nav>
+            <h1 class="h3 text-dark fw-bold m-0">Editar Cita de Inspección</h1>
+        </div>
+        <a asp-page="./Calendar" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+            <i class="bi bi-arrow-left"></i>
+            <span>Volver al Calendario</span>
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="card-title text-dark fw-bold mb-0">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Modificar Datos de la Cita
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
+
+                        <!-- Campo oculto indispensable para conservar el Id al actualizar -->
+                        <input type="hidden" asp-for="InspectionAppointment.Id" />
+
+                        <div class="row g-3 mb-4">
+                            <!-- Selector de Cliente -->
+                            <div class="col-md-6">
+                                <label asp-for="InspectionAppointment.ClientId" class="form-label fw-semibold text-dark">
+                                    Cliente <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-person-fill"></i></span>
+                                    <select id="clientSelect" asp-for="InspectionAppointment.ClientId" class="form-select" asp-items="Model.ClientsList">
+                                        <option value="">-- Seleccione un cliente --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="InspectionAppointment.ClientId" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Selector de Vehículo -->
+                            <div class="col-md-6">
+                                <label asp-for="InspectionAppointment.VehicleId" class="form-label fw-semibold text-dark">
+                                    Vehículo (Opcional)
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-car-front-fill"></i></span>
+                                    <select id="vehicleSelect" asp-for="InspectionAppointment.VehicleId" class="form-select" asp-items="Model.VehiclesList">
+                                        <option value="">-- Seleccione un vehículo --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="InspectionAppointment.VehicleId" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Fecha de la Cita -->
+                            <div class="col-md-4">
+                                <label asp-for="InspectionAppointment.AppointmentDate" class="form-label fw-semibold text-dark">
+                                    Fecha de Cita <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-calendar-event"></i></span>
+                                    <input asp-for="InspectionAppointment.AppointmentDate" class="form-control" type="date" />
+                                </div>
+                                <span asp-validation-for="InspectionAppointment.AppointmentDate" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Hora de Inicio -->
+                            <div class="col-md-4">
+                                <label asp-for="InspectionAppointment.StartTime" class="form-label fw-semibold text-dark">
+                                    Hora Inicio <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-clock"></i></span>
+                                    <input id="startTimeInput"
+                                           asp-for="InspectionAppointment.StartTime"
+                                           type="text"
+                                           class="form-control bg-white"
+                                           placeholder="Seleccione hora" />
+                                </div>
+                                <span asp-validation-for="InspectionAppointment.StartTime" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Hora de Fin -->
+                            <div class="col-md-4">
+                                <label asp-for="InspectionAppointment.EndTime" class="form-label fw-semibold text-dark">
+                                    Hora Fin <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-clock-fill"></i></span>
+                                    <input id="endTimeInput"
+                                           asp-for="InspectionAppointment.EndTime"
+                                           type="text"
+                                           class="form-control bg-white"
+                                           placeholder="Seleccione hora" />
+                                </div>
+                                <span asp-validation-for="InspectionAppointment.EndTime" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Indicador Visual de Duración Calculada -->
+                            <div class="col-12">
+                                <div class="p-2 bg-light rounded border d-flex align-items-center gap-2 text-muted small">
+                                    <i class="bi bi-info-circle text-primary"></i>
+                                    <span>Duración estimada: <strong id="calculatedDuration" class="text-dark">--</strong></span>
+                                </div>
+                            </div>
+
+                            <!-- Tipo de Inspección -->
+                            <div class="col-md-6">
+                                <label asp-for="InspectionAppointment.InspectionType" class="form-label fw-semibold text-dark">
+                                    Tipo de Inspección <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-tools"></i></span>
+                                    <select asp-for="InspectionAppointment.InspectionType" class="form-select">
+                                        <option value="Diagnóstico General">Diagnóstico General</option>
+                                        <option value="Revisión de Frenos">Revisión de Frenos</option>
+                                        <option value="Escaneo Electrónico">Escaneo Electrónico</option>
+                                        <option value="Inyección / Laboratorio">Inyección / Laboratorio</option>
+                                        <option value="Aire Acondicionado">Aire Acondicionado</option>
+                                        <option value="Mantenimiento Rutinario">Mantenimiento Rutinario</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="InspectionAppointment.InspectionType" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Estado Actual -->
+                            <div class="col-md-6">
+                                <label asp-for="InspectionAppointment.Status" class="form-label fw-semibold text-dark">
+                                    Estado <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-flag-fill"></i></span>
+                                    <select asp-for="InspectionAppointment.Status" class="form-select">
+                                        <option value="Programada">Programada</option>
+                                        <option value="Confirmada">Confirmada</option>
+                                        <option value="Convertida a Orden">Convertida a Orden</option>
+                                        <option value="Cancelada">Cancelada</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="InspectionAppointment.Status" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Motivo / Sintomatología -->
+                            <div class="col-12">
+                                <label asp-for="InspectionAppointment.Reason" class="form-label fw-semibold text-dark">
+                                    Motivo / Sintomatología
+                                </label>
+                                <textarea asp-for="InspectionAppointment.Reason" class="form-control" rows="3" placeholder="Sintomatología reportada, observaciones o trabajo requerido..."></textarea>
+                                <span asp-validation-for="InspectionAppointment.Reason" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a asp-page="./Calendar" class="btn btn-light px-4">Cancelar</a>
+                            <button type="submit" class="btn btn-primary px-4 d-flex align-items-center gap-2">
+                                <i class="bi bi-check-lg"></i>
+                                <span>Guardar Cambios</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const vehicleSelect = document.getElementById('vehicleSelect');
+            const clientSelect = document.getElementById('clientSelect');
+            const durationDisplay = document.getElementById('calculatedDuration');
+
+            const timeConfig = {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                minuteIncrement: 15,
+                onChange: function() {
+                    updateDuration();
+                }
+            };
+
+            const fpStart = flatpickr("#startTimeInput", timeConfig);
+            const fpEnd = flatpickr("#endTimeInput", timeConfig);
+
+            vehicleSelect?.addEventListener('change', async function() {
+                const vehicleId = this.value;
+                if (!vehicleId) return;
+
+                try {
+                    const response = await fetch(`?handler=VehicleClientInfo&vehicleId=${vehicleId}`);
+                    const data = await response.json();
+
+                    if (data.success && data.clientId) {
+                        clientSelect.value = data.clientId;
+                    }
+                } catch (err) {
+                    console.error('Error al sincronizar el cliente del vehículo:', err);
+                }
+            });
+
+            function updateDuration() {
+                const startVal = document.getElementById('startTimeInput').value;
+                const endVal = document.getElementById('endTimeInput').value;
+
+                if (!startVal || !endVal) {
+                    durationDisplay.textContent = "--";
+                    durationDisplay.className = "text-dark fw-bold";
+                    return;
+                }
+
+                const [startH, startM] = startVal.split(':').map(Number);
+                const [endH, endM] = endVal.split(':').map(Number);
+
+                const startTotal = startH * 60 + startM;
+                const endTotal = endH * 60 + endM;
+                const diff = endTotal - startTotal;
+
+                if (diff <= 0) {
+                    durationDisplay.textContent = "Hora de fin inválida (debe ser mayor a la hora de inicio)";
+                    durationDisplay.className = "text-danger fw-bold";
+                } else {
+                    const hours = Math.floor(diff / 60);
+                    const minutes = diff % 60;
+                    let text = `${diff} min`;
+                    if (hours > 0) {
+                        text += ` (${hours} h${minutes > 0 ? ` ${minutes} m` : ''})`;
+                    }
+                    durationDisplay.textContent = text;
+                    durationDisplay.className = "text-dark fw-bold";
+                }
+            }
+
+            updateDuration();
+        });
+    </script>
+}
