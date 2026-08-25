@@ -64,3 +64,6 @@ fly.toml
 fly*.toml
 ## --- Workflows de GitHub Actions ---
 .github/workflows/fly-deploy.yml
+
+## --- Carpeta de Base de Datos Local ---
+**/Database/
