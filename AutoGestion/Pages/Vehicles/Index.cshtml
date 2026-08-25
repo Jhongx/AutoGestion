@@ -5,108 +5,183 @@
     ViewData["Title"] = "Gestión de Vehículos";
 }
 
-<!-- Encabezado de la Página -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold text-dark mb-1">
-            <i class="bi bi-car-front-fill text-primary me-2"></i>Gestión de Vehículos
-        </h2>
-        <p class="text-muted small mb-0">Listado general de vehículos registrados y sus propietarios.</p>
-    </div>
-    <a asp-page="Create" class="btn btn-primary fw-semibold shadow-sm">
-        <i class="bi bi-plus-lg me-1"></i> Registrar Vehículo
-    </a>
-</div>
-
-<!-- Tabla de Vehículos -->
-<div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light border-bottom">
-                    <tr>
-                        <th class="py-3 ps-4">Placa</th>
-                        <th class="py-3">Vehículo</th>
-                        <th class="py-3">Propietario / Cliente</th>
-                        <th class="py-3 text-center">Año</th>
-                        <th class="py-3">Transmisión</th>
-                        <th class="py-3 text-end pe-4">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Vehicle != null && Model.Vehicle.Any())
-                    {
-                        @foreach (var item in Model.Vehicle)
-                        {
-                            <tr>
-                                <!-- Placa -->
-                                <td class="ps-4">
-                                    <span class="badge bg-light text-dark border fs-6 fw-semibold">
-                                        <i class="bi bi-card-heading me-1 text-muted"></i>@item.LicensePlate
-                                    </span>
-                                </td>
-
-                                <!-- Marca y Modelo -->
-                                <td>
-                                    <div class="fw-bold text-dark">@item.Brand @item.Model</div>
-                                </td>
-
-                                <!-- Propietario -->
-                                <td>
-                                    @if (item.Client != null)
-                                    {
-                                        <a asp-page="/Clients/Details" asp-route-id="@item.ClientId" class="text-decoration-none text-dark fw-semibold">
-                                            <i class="bi bi-person text-primary me-1"></i>@item.Client.FullName
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted opacity-50">Sin asignar</span>
-                                    }
-                                </td>
-
-                                <!-- Año -->
-                                <td class="text-center">
-                                    <span class="text-muted fw-semibold">
-                                        @(item.Year > 0 ? item.Year.ToString() : "N/A")
-                                    </span>
-                                </td>
-
-                                <!-- Transmisión -->
-                                <td>
-                                    <span class="badge bg-secondary bg-opacity-10 text-dark border border-secondary border-opacity-25 fw-normal">
-                                        @item.Transmission
-                                    </span>
-                                </td>
-
-                                <!-- Botones de Acción -->
-                                <td class="text-end pe-4">
-                                    <div class="btn-group" role="group">
-                                        <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Detalles">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning text-dark" title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
-                                <i class="bi bi-car-front fs-1 d-block mb-2 opacity-50"></i>
-                                No hay vehículos registrados en el sistema.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+<div class="container-fluid px-2 px-md-4 py-3">
+    <!-- Encabezado de la Sección con Breadcrumb y Botones de Volver y Registrar -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small">
+                    <li class="breadcrumb-item"><a asp-page="/Index" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item active">Vehículos</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-dark mb-1 h3">
+                <i class="bi bi-car-front-fill text-primary me-2"></i>Gestión de Vehículos
+            </h2>
+            <p class="text-muted small mb-0">Listado general de vehículos registrados, marcas y sus propietarios.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <!-- Botón de Volver adaptable -->
+            <a asp-page="/Index" class="btn btn-outline-secondary fw-semibold shadow-sm flex-fill flex-sm-grow-0">
+                <i class="bi bi-arrow-left me-1"></i> Volver
+            </a>
+            <!-- Botón de Registrar -->
+            <a asp-page="Create" class="btn btn-primary fw-semibold shadow-sm flex-fill flex-sm-grow-0">
+                <i class="bi bi-plus-lg me-1"></i> Registrar Vehículo
+            </a>
         </div>
     </div>
+
+    @if (Model.Vehicle == null || !Model.Vehicle.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-body text-center py-5 text-muted">
+                <i class="bi bi-car-front fs-1 d-block mb-2 text-secondary opacity-50"></i>
+                <p class="mb-0 fw-semibold">No hay vehículos registrados en el sistema.</p>
+                <small class="text-muted">Utiliza el botón de registrar para agregar el primero.</small>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- ========================================== -->
+        <!-- 1. VISTA DE TABLA (Visible solo en Desktop / d-none d-md-block) -->
+        <!-- ========================================== -->
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden d-none d-md-block">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light border-bottom">
+                            <tr>
+                                <th class="py-3 ps-4"><i class="bi bi-card-heading me-1"></i> Placa</th>
+                                <th class="py-3"><i class="bi bi-car-front me-1"></i> Vehículo</th>
+                                <th class="py-3"><i class="bi bi-person me-1"></i> Propietario / Cliente</th>
+                                <th class="py-3 text-center"><i class="bi bi-calendar3 me-1"></i> Año</th>
+                                <th class="py-3"><i class="bi bi-gear me-1"></i> Transmisión</th>
+                                <th class="py-3 text-end pe-4">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Vehicle)
+                            {
+                                <tr>
+                                    <!-- Placa -->
+                                    <td class="ps-4">
+                                        <span class="badge bg-light text-dark border fw-semibold font-monospace">
+                                            @item.LicensePlate
+                                        </span>
+                                    </td>
+
+                                    <!-- Marca y Modelo -->
+                                    <td>
+                                        <div class="fw-bold text-dark">@item.Brand @item.Model</div>
+                                    </td>
+
+                                    <!-- Propietario -->
+                                    <td>
+                                        @if (item.Client != null)
+                                        {
+                                            <a asp-page="/Clients/Details" asp-route-id="@item.ClientId" class="text-decoration-none text-dark fw-semibold">
+                                                <i class="bi bi-person text-primary me-1"></i>@item.Client.FullName
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted opacity-50 small">Sin asignar</span>
+                                        }
+                                    </td>
+
+                                    <!-- Año -->
+                                    <td class="text-center">
+                                        <span class="text-muted fw-semibold">
+                                            @(item.Year > 0 ? item.Year.ToString() : "N/A")
+                                        </span>
+                                    </td>
+
+                                    <!-- Transmisión -->
+                                    <td>
+                                        <span class="badge bg-secondary bg-opacity-10 text-dark border border-secondary border-opacity-25 fw-normal">
+                                            @item.Transmission
+                                        </span>
+                                    </td>
+
+                                    <!-- Botones de Acción -->
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-outline-info" title="Detalles">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 2. VISTA DE TARJETAS (Visible solo en Móvil / d-block d-md-none) -->
+        <!-- ========================================== -->
+        <div class="d-block d-md-none d-flex flex-column gap-3">
+            @foreach (var item in Model.Vehicle)
+            {
+                <div class="card border-0 shadow-sm rounded-3 p-3">
+                    <!-- Cabecera de la tarjeta: Marca/Modelo y Placa -->
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1">@item.Brand @item.Model</h6>
+                            <span class="badge bg-light text-dark border small font-monospace">
+                                <i class="bi bi-card-heading me-1 text-muted"></i>@item.LicensePlate
+                            </span>
+                        </div>
+                        <span class="badge bg-secondary bg-opacity-10 text-dark border border-secondary border-opacity-25 px-2 py-1 fw-normal">
+                            @item.Transmission
+                        </span>
+                    </div>
+
+                    <!-- Datos Secundarios (Año y Propietario) -->
+                    <div class="small text-muted py-2 border-top border-bottom my-2 d-flex flex-column gap-1">
+                        <div>
+                            <i class="bi bi-calendar3 text-primary me-1"></i> <strong>Año:</strong>
+                            <span class="text-dark fw-semibold">@(item.Year > 0 ? item.Year.ToString() : "N/A")</span>
+                        </div>
+                        <div>
+                            <i class="bi bi-person text-primary me-1"></i> <strong>Propietario:</strong>
+                            @if (item.Client != null)
+                            {
+                                <a asp-page="/Clients/Details" asp-route-id="@item.ClientId" class="text-decoration-none text-dark fw-bold">
+                                    @item.Client.FullName
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted opacity-50">Sin asignar</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción Móvil -->
+                    <div class="d-flex gap-2 mt-1">
+                        <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm flex-fill d-flex align-items-center justify-content-center gap-1">
+                            <i class="bi bi-eye"></i> Detalles
+                        </a>
+                        <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm flex-fill d-flex align-items-center justify-content-center gap-1">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm flex-fill d-flex align-items-center justify-content-center gap-1">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>

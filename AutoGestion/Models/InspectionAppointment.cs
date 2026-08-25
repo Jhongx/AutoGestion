@@ -3,15 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AutoGestion.Models
 {
-    public class InspectionAppointment
+    public class InspectionAppointment : BaseEntity
     {
         [Key]
         public int Id { get; set; }
 
-        // 1. Fecha del día de la cita
+        // 1. Fecha del día de la cita (Ajustada a la hora de Costa Rica por defecto)
         [Required(ErrorMessage = "La fecha de la cita es obligatoria.")]
         [Display(Name = "Fecha de la Cita")]
-        public DateOnly AppointmentDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+        public DateOnly AppointmentDate { get; set; } = DateOnly.FromDateTime(
+            TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("America/Costa_Rica"))
+        );
 
         // 2. Hora de inicio del rango
         [Required(ErrorMessage = "La hora de inicio es obligatoria.")]

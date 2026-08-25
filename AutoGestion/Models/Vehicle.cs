@@ -3,7 +3,7 @@ using static AutoGestion.Utilities.Commons.AppConstants;
 
 namespace AutoGestion.Models
 {
-    public class Vehicle
+    public class Vehicle : BaseEntity
     {
         public int Id { get; set; }
 

@@ -1,4 +1,5 @@
 using AutoGestion.Data;
+using AutoGestion.Helpers;
 using AutoGestion.Models;
 using AutoGestion.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +62,7 @@ public class EditModel : PageModel
 
         try
         {
+            Vehicle.UpdatedAt = DateTime.UtcNow.ToCostaRicaTime();
             _vehicleRepository.Update(Vehicle); // Se marca la entidad como modificada
             await _vehicleRepository.SaveChangesAsync(); // Se persisten los cambios en la BD
         }

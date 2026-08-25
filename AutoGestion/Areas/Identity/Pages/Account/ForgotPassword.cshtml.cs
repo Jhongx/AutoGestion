@@ -27,23 +27,11 @@ public class ForgotPasswordModel : PageModel
         _emailSender = emailSender;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     [BindProperty]
     public InputModel Input { get; set; } = default!;
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [Required]
         [EmailAddress]
         public string Email { get; set; } = default!;
@@ -60,8 +48,6 @@ public class ForgotPasswordModel : PageModel
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
 
-            // For more information on how to enable account confirmation and password reset please
-            // visit https://go.microsoft.com/fwlink/?LinkID=532713
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Page(
@@ -70,10 +56,55 @@ public class ForgotPasswordModel : PageModel
                 values: new { area = "Identity", code },
                 protocol: Request.Scheme)!;
 
-            await _emailSender.SendEmailAsync(
-                Input.Email,
-                "Reset Password",
-                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            // Plantilla HTML moderna y profesional
+            var resetLink = HtmlEncoder.Default.Encode(callbackUrl);
+            var htmlMessage = $@"
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset=""utf-8"">
+                    <style>
+                        body {{ font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; }}
+                        .email-container {{ max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }}
+                        .email-header {{ background: #212529; color: #ffffff; padding: 20px; text-align: center; }}
+                        .email-body {{ padding: 30px; color: #333333; line-height: 1.6; }}
+                        .btn-reset {{ display: inline-block; background-color: #0d6efd; color: #ffffff !important; text-decoration: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; margin: 20px 0; }}
+                        .email-footer {{ background: #f8f9fa; padding: 15px; text-align: center; font-size: 12px; color: #6c757d; }}
+                    </style>
+                </head>
+                <body>
+                    <div class=""email-container"">
+                        <div class=""email-header"">
+                            <h2>AutoGestión</h2>
+                        </div>
+                        <div class=""email-body"">
+                            <p>Hola,</p>
+                            <p>Has solicitado restablecer tu contraseña para tu cuenta en <strong>AutoGestión</strong>.</p>
+                            <p>Haz clic en el siguiente botón para continuar con el proceso:</p>
+                            <div style=""text-align: center;"">
+                                <a href=""{resetLink}"" class=""btn-reset"">Restablecer Contraseña</a>
+                            </div>
+                            <p><small>Si no solicitaste este cambio, puedes ignorar este mensaje de manera segura.</small></p>
+                        </div>
+                        <div class=""email-footer"">
+                            &copy; {DateTime.Now.Year} AutoGestión. Todos los derechos reservados.
+                        </div>
+                    </div>
+                </body>
+                </html>";
+
+            try
+            {
+                await _emailSender.SendEmailAsync(
+                    Input.Email,
+                    "Restablece tu contraseña - AutoGestión",
+                    htmlMessage);
+            }
+            catch (Exception ex)
+            {
+                // Punto de interrupción en caso de error en el envío
+                Console.WriteLine(ex.Message);
+            }
 
             return RedirectToPage("./ForgotPasswordConfirmation");
         }

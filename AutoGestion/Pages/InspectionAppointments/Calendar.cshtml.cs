@@ -32,6 +32,9 @@ namespace AutoGestion.Pages.InspectionAppointments
                     time = a.ScheduledDateTime.ToString("hh:mm tt"),
                     inspectionType = a.InspectionType,
                     status = a.Status,
+                    // Validamos que no esté convertida a orden (ignorando mayúsculas/minúsculas)
+                    canReceive = !string.Equals(a.Status, "Convertida a Orden", StringComparison.OrdinalIgnoreCase) &&
+                                 !string.Equals(a.Status, "Convertida", StringComparison.OrdinalIgnoreCase),
                     client = a.Client != null ? $"{a.Client.FirstName} {a.Client.LastName}" : "N/A",
                     vehicle = a.Vehicle != null ? $"{a.Vehicle.Brand} {a.Vehicle.Model} ({a.Vehicle.LicensePlate})" : "Por definir",
                     reason = a.Reason ?? "Sin detalles",

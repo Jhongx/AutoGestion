@@ -1,8 +1,9 @@
 using AutoGestion.Data;
 using AutoGestion.Extensions;
-using Microsoft.AspNetCore.HttpOverrides; // <-- Requerido para el proxy de Fly.io
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection; // <-- 1. IMPORTAR ESTE NAMESPACE
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +22,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 
-// Registra automáticamente todos los repositorios del proyecto
+// Registra automáticamente todos los repositorios y servicios del proyecto
 builder.Services.AddRepositoriesAuto();
+builder.Services.AddServicesAuto();
 
 // Configuración de ASP.NET Core Identity
 builder.Services.AddDefaultIdentity<AutoGestion.Data.ApplicationUser>(options =>
@@ -36,6 +38,20 @@ builder.Services.AddDefaultIdentity<AutoGestion.Data.ApplicationUser>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Limitar la expiración de la cookie a 1 día máximo
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.SlidingExpiration = true; // Renueva el día si el usuario sigue activo
+});
+
+// <-- 2. CONFIGURAR DATA PROTECTION PARA PRODUCCIÓN (EN EL VOLUMEN PERSISTENTE) -->
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(@"/app/data/keys"));
+}
+
 // Protección de Razor Pages
 builder.Services.AddRazorPages(options =>
 {
@@ -45,7 +61,7 @@ builder.Services.AddRazorPages(options =>
 
 var app = builder.Build();
 
-// 1. Asegurar que la carpeta para SQLite exista en el servidor (Fly.io)
+// 1. Asegurar que la carpeta para SQLite y llaves exista en el servidor (Fly.io)
 if (!app.Environment.IsDevelopment())
 {
     var dataDirectory = "/app/data";
@@ -53,12 +69,19 @@ if (!app.Environment.IsDevelopment())
     {
         Directory.CreateDirectory(dataDirectory);
     }
+
+    // Opcional: Asegurar subcarpeta de keys
+    var keysDirectory = "/app/data/keys";
+    if (!Directory.Exists(keysDirectory))
+    {
+        Directory.CreateDirectory(keysDirectory);
+    }
 }
 
 // Procesa el tráfico HTTPS del proxy inverso de Fly.io antes de cualquier otra regla
 app.UseForwardedHeaders();
 
-// 2. fAplicar migraciones automáticas e inicializar catálogos
+// 2. Aplicar migraciones automáticas e inicializar catálogos
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -78,6 +101,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
 // Middlewares de Seguridad

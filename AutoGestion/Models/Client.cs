@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace AutoGestion.Models
 {
-    public class Client
+    public class Client : BaseEntity
     {
         public int Id { get; set; }
 

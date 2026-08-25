@@ -1,4 +1,5 @@
 using AutoGestion.Data;
+using AutoGestion.Helpers;
 using AutoGestion.Models;
 using AutoGestion.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,7 @@ public class EditModel : PageModel
         if (!ModelState.IsValid)
         {
             // Si la validación falla, recargar el desplegable manteniendo la selección enviada
+            Client.UpdatedAt = DateTime.UtcNow.ToCostaRicaTime();
             await LoadDocTypesSelectListAsync(Client.DocTypeId);
             return Page();
         }

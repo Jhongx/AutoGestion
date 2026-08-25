@@ -30,7 +30,12 @@ namespace AutoGestion.Pages.InspectionAppointments
 
         public async Task<IActionResult> OnGetAsync(string? selectedDate = null)
         {
-            // 1. Determinar fecha y hora base de inicio (redondeada al siguiente intervalo de 15 min)
+            // 1. Obtener la hora actual en UTC y convertirla a la zona horaria de Costa Rica
+            var utcNow = DateTime.UtcNow;
+            var costaRicaTz = TimeZoneInfo.FindSystemTimeZoneById("America/Costa_Rica");
+            var localNow = TimeZoneInfo.ConvertTimeFromUtc(utcNow, costaRicaTz);
+
+            // 2. Determinar fecha y hora base de inicio (redondeada al siguiente intervalo de 15 min)
             DateTime baseDateTime;
             if (!string.IsNullOrEmpty(selectedDate) && DateTime.TryParse(selectedDate, out DateTime parsedDate))
             {
@@ -38,13 +43,12 @@ namespace AutoGestion.Pages.InspectionAppointments
             }
             else
             {
-                var now = DateTime.Now;
-                // Redondear los minutos al siguiente múltiplo de 15 (ej: 10:12 -> 10:15)
-                int roundedMinutes = (int)(Math.Ceiling(now.Minute / 15.0) * 15);
-                baseDateTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0).AddMinutes(roundedMinutes);
+                // Usamos la hora local ya convertida de Costa Rica en lugar de DateTime.Now
+                int roundedMinutes = (int)(Math.Ceiling(localNow.Minute / 15.0) * 15);
+                baseDateTime = new DateTime(localNow.Year, localNow.Month, localNow.Day, localNow.Hour, 0, 0).AddMinutes(roundedMinutes);
             }
 
-            // 2. Instanciar el objeto asignando las propiedades individuales
+            // 3. Instanciar el objeto asignando las propiedades individuales
             InspectionAppointment = new InspectionAppointment
             {
                 Status = "Programada",

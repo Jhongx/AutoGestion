@@ -2,20 +2,36 @@
     var calendarEl = document.getElementById('calendar');
     if (!calendarEl) return;
 
-    // Normalizar eventos para evitar que abarquen múltiples días si son de un solo día
-    var rawEvents = JSON.parse(calendarEl.dataset.events || '[]').map(function (evt) {
-        // Copiar objeto para no mutar el original
-        var cleanEvt = Object.assign({}, evt);
+    // Función auxiliar para normalizar colores según el Tipo de Servicio
+    function getServiceColor(serviceType) {
+        if (!serviceType) return '#0d6efd'; // Azul por defecto
+        var type = serviceType.toLowerCase();
 
-        // Si no es un rango real de días, omitir 'end' para evitar solapamiento de 2 días en FullCalendar
+        if (type.includes('mantenimiento')) return '#0d6efd'; // Azul
+        if (type.includes('reparación') || type.includes('reparacion')) return '#dc3545'; // Rojo
+        if (type.includes('diagnóstico') || type.includes('diagnostico') || type.includes('falla')) return '#ffc107'; // Amarillo
+
+        return '#198754'; // Verde (Otros Servicios)
+    }
+
+    // Normalizar eventos y asegurar colores coherentes
+    var rawEvents = JSON.parse(calendarEl.dataset.events || '[]').map(function (evt) {
+        var cleanEvt = Object.assign({}, evt);
+        var props = cleanEvt.extendedProps || {};
+
+        // Asignar color unificado si el backend no lo trae o para forzar la paleta
+        var unifiedColor = getServiceColor(props.serviceType);
+        cleanEvt.color = unifiedColor;
+        if (cleanEvt.backgroundColor) cleanEvt.backgroundColor = unifiedColor;
+
         if (cleanEvt.start && cleanEvt.end) {
             var startDate = cleanEvt.start.split('T')[0];
             var endDate = cleanEvt.end.split('T')[0];
             if (startDate === endDate) {
-                delete cleanEvt.end; // Al quitar 'end', la vista List lo renderiza SOLO en su día
+                delete cleanEvt.end;
             }
         }
-        cleanEvt.allDay = true; // Forzar a que sea de día completo si no usa horas estrictas
+        cleanEvt.allDay = true;
         return cleanEvt;
     });
 

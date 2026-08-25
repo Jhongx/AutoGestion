@@ -13,22 +13,29 @@ public class CreateModel : PageModel
     private readonly IReceivingOrderRepository _receivingOrderRepo;
     private readonly IVehicleRepository _vehicleRepo;
     private readonly IClientRepository _clientRepo;
-    private readonly ApplicationDbContext _context; // <-- AGREGADO
+    private readonly IInspectionAppointmentRepository _appointmentRepo; // <-- Repositorio de Citas incorporado
+    private readonly ApplicationDbContext _context;
 
     public CreateModel(
         IReceivingOrderRepository receivingOrderRepo,
         IVehicleRepository vehicleRepo,
         IClientRepository clientRepo,
-        ApplicationDbContext context) // <-- AGREGADO
+        IInspectionAppointmentRepository appointmentRepo, // <-- Inyección en el constructor
+        ApplicationDbContext context)
     {
         _receivingOrderRepo = receivingOrderRepo;
         _vehicleRepo = vehicleRepo;
         _clientRepo = clientRepo;
-        _context = context; // <-- AGREGADO
+        _appointmentRepo = appointmentRepo;
+        _context = context;
     }
 
     [BindProperty]
     public ReceivingOrder ReceivingOrder { get; set; } = default!;
+
+    // Parámetro opcional para rastrear si viene de una cita y asociarla
+    [BindProperty(SupportsGet = true)]
+    public int? AppointmentId { get; set; }
 
     // Propiedad para llenar el <select> de vehículos en la vista .cshtml
     public SelectList VehiclesList { get; set; } = default!;
@@ -36,8 +43,33 @@ public class CreateModel : PageModel
     // Propiedad para llenar el <select> de niveles de combustible
     public SelectList FuelLevelsList { get; set; } = default!;
 
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(int? appointmentId, int? vehicleId, int? clientId, string? reason)
     {
+        // 1. Capturamos el ID de la cita
+        if (appointmentId.HasValue)
+        {
+            AppointmentId = appointmentId.Value;
+
+            // Consultamos la cita directamente en la base de datos para extraer sus datos de forma segura
+            var appointment = await _appointmentRepo.GetByIdAsync(AppointmentId.Value);
+            if (appointment != null)
+            {
+                // Mapeamos los valores de la cita a la orden de recepción
+                // (Asegúrate de que appointment.VehicleId y appointment.Reason coincidan con los nombres de propiedades de tu modelo de Citas)
+                vehicleId = appointment.VehicleId;
+                reason = appointment.Reason; // O la propiedad que guarde el motivo en tu cita (ej: Description, Notes, etc.)
+            }
+        }
+
+        // 2. Inicializamos la orden de recepción con los valores ya resueltos
+        ReceivingOrder = new ReceivingOrder
+        {
+            DateTime = DateTime.Now,
+            VehicleId = vehicleId ?? 0,
+            ProblemDescription = reason ?? string.Empty
+        };
+
+        // 3. Cargamos las listas desplegables (ahora ReceivingOrder.VehicleId ya tiene valor, por lo que el SelectList lo marcará como seleccionado)
         await LoadSelectListsAsync();
         return Page();
     }
@@ -51,7 +83,19 @@ public class CreateModel : PageModel
             return Page();
         }
 
+        // 1. Guardamos la nueva orden de recepción
         await _receivingOrderRepo.AddAsync(ReceivingOrder);
+
+        // 2. Si la orden se generó a partir de una cita, actualizamos el estado de la cita
+        if (AppointmentId.HasValue)
+        {
+            var appointment = await _appointmentRepo.GetByIdAsync(AppointmentId.Value);
+            if (appointment != null)
+            {
+                appointment.Status = "Convertida a Orden"; // Ajusta el texto según los estados que manejes
+                await _appointmentRepo.UpdateAsync(appointment);
+            }
+        }
 
         return RedirectToPage("./Index");
     }
@@ -86,9 +130,10 @@ public class CreateModel : PageModel
             ReceivingOrder?.FuelLevelId
         );
     }
+
     public async Task<JsonResult> OnGetVehicleClientInfoAsync(int vehicleId)
     {
-        var vehicle = await _vehicleRepo.GetByIdAsync(vehicleId); // Asegúrate que devuelva v.Client
+        var vehicle = await _vehicleRepo.GetByIdAsync(vehicleId);
 
         if (vehicle?.Client != null)
         {

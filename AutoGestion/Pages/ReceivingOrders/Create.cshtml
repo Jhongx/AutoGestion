@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Nueva Orden de Recepción";
 }
+@using AutoGestion.Helpers
 
 <div class="container-fluid px-4 py-3">
     <!-- Breadcrumb & Encabezado -->
@@ -32,6 +33,7 @@
                 </div>
                 <div class="card-body p-4">
                     <form method="post">
+                        <input type="hidden" asp-for="AppointmentId" />
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
 
                         <div class="row g-3 mb-4">
@@ -65,7 +67,7 @@
                                 <label asp-for="ReceivingOrder.DateTime" class="form-label fw-semibold text-dark">Fecha y Hora de Ingreso <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="bi bi-calendar-event"></i></span>
-                                    <input asp-for="ReceivingOrder.DateTime" class="form-control" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                                    <input asp-for="ReceivingOrder.DateTime" class="form-control" type="datetime-local" value="@DateTime.UtcNow.ToCostaRicaTime().ToString("yyyy-MM-ddTHH:mm")" />
                                 </div>
                                 <span asp-validation-for="ReceivingOrder.DateTime" class="text-danger small"></span>
                             </div>
@@ -143,4 +145,16 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
         <script src="~/js/ReceivingOrders/ReceivingOrders.js" asp-append-version="true"></script>
     }
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const vehicleSelect = document.getElementById("vehicleSelect");
+            // Si hay un vehículo preseleccionado (ej. al venir desde una cita),
+            // disparamos el evento change para que el script externo cargue los datos del cliente en la tarjeta.
+            if (vehicleSelect && vehicleSelect.value) {
+                const event = new Event('change');
+                vehicleSelect.dispatchEvent(event);
+            }
+        });
+    </script>
 }

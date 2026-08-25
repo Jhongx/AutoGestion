@@ -38,33 +38,45 @@
 
         dayEvents.forEach(function (evt) {
             var props = evt.extendedProps || {};
+            var detailsUrl = evt.url || `/InspectionAppointments/Details?id=${evt.id}`;
+
+            // Construcción condicional del botón de recepción según la propiedad canReceive del backend
+            var receiveButtonHtml = '';
+            if (props.canReceive) {
+                receiveButtonHtml = `
+                    <a href="/ReceivingOrders/Create?appointmentId=${evt.id}" class="btn btn-sm btn-primary w-50 fw-semibold">
+                        Recepcionar <i class="bi bi-arrow-right ms-1"></i>
+                    </a>`;
+            }
+
+            // Si ya está convertida, el botón de detalle toma todo el ancho disponible
+            var detailsButtonClass = props.canReceive ? 'w-50' : 'w-100';
+
             var cardHtml = `
-                <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden" style="border-left: 4px solid ${evt.color || '#0d6efd'} !important;">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <span class="badge bg-dark bg-opacity-10 text-dark fw-bold">
-                                <i class="bi bi-clock me-1"></i>${props.time || 'Pendiente'}
-                            </span>
-                            <span class="badge" style="background-color: ${evt.color || '#0d6efd'};">
-                                ${props.status || 'Programada'}
-                            </span>
-                        </div>
-                        <h6 class="fw-bold text-dark mb-1">${props.fullTitle || evt.title}</h6>
-                        <div class="small text-muted mb-3">
-                            <div class="mb-1"><i class="bi bi-person me-1 text-primary"></i><strong>Cliente:</strong> ${props.client}</div>
-                            <div class="mb-1"><i class="bi bi-car-front me-1 text-primary"></i><strong>Vehículo:</strong> ${props.vehicle}</div>
-                            <div><i class="bi bi-chat-left-text me-1 text-primary"></i><strong>Sintomatología:</strong> ${props.reason}</div>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <a href="${evt.url}" class="btn btn-sm btn-outline-secondary w-50 fw-semibold">
-                                Ver Detalle
-                            </a>
-                            <a href="/ReceivingOrders/Create?appointmentId=${evt.id}" class="btn btn-sm btn-primary w-50 fw-semibold">
-                                Recepcionar <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>`;
+        <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden" style="border-left: 4px solid ${evt.color || '#0d6efd'} !important;">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-dark bg-opacity-10 text-dark fw-bold">
+                        <i class="bi bi-clock me-1"></i>${props.time || 'Pendiente'}
+                    </span>
+                    <span class="badge" style="background-color: ${evt.color || '#0d6efd'};">
+                        ${props.status || 'Programada'}
+                    </span>
+                </div>
+                <h6 class="fw-bold text-dark mb-1">${props.fullTitle || evt.title}</h6>
+                <div class="small text-muted mb-3">
+                    <div class="mb-1"><i class="bi bi-person me-1 text-primary"></i><strong>Cliente:</strong> ${props.client}</div>
+                    <div class="mb-1"><i class="bi bi-car-front me-1 text-primary"></i><strong>Vehículo:</strong> ${props.vehicle}</div>
+                    <div><i class="bi bi-chat-left-text me-1 text-primary"></i><strong>Sintomatología:</strong> ${props.reason}</div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="${detailsUrl}" class="btn btn-sm btn-outline-secondary ${detailsButtonClass} fw-semibold">
+                        Ver Detalle
+                    </a>
+                    ${receiveButtonHtml}
+                </div>
+            </div>
+        </div>`;
             listContainer.innerHTML += cardHtml;
         });
     }

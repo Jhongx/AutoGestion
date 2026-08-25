@@ -1,4 +1,5 @@
 using AutoGestion.Data;
+using AutoGestion.Helpers;
 using AutoGestion.Models;
 using AutoGestion.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +54,7 @@ public class EditModel : PageModel
 
         try
         {
+            Inventory.UpdatedAt = DateTime.UtcNow.ToCostaRicaTime();
             await _inventoryRepository.UpdateAsync(Inventory);
         }
         catch (DbUpdateConcurrencyException)
