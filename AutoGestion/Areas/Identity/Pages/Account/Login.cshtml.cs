@@ -126,7 +126,7 @@ public class LoginModel : PageModel
             }
 
             // 3. Proceder con la autenticación estándar de ASP.NET Core Identity
-            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, isPersistent: Input.RememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {

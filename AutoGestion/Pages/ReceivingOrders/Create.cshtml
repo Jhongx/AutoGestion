@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Nueva Orden de Recepción";
 }
+@using AutoGestion.Helpers
 
 <div class="container-fluid px-4 py-3">
     <!-- Breadcrumb & Encabezado -->
@@ -66,7 +67,7 @@
                                 <label asp-for="ReceivingOrder.DateTime" class="form-label fw-semibold text-dark">Fecha y Hora de Ingreso <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="bi bi-calendar-event"></i></span>
-                                    <input asp-for="ReceivingOrder.DateTime" class="form-control" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                                    <input asp-for="ReceivingOrder.DateTime" class="form-control" type="datetime-local" value="@DateTime.UtcNow.ToCostaRicaTime().ToString("yyyy-MM-ddTHH:mm")" />
                                 </div>
                                 <span asp-validation-for="ReceivingOrder.DateTime" class="text-danger small"></span>
                             </div>

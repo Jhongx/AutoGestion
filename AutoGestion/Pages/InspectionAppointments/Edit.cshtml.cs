@@ -1,3 +1,4 @@
+using AutoGestion.Helpers;
 using AutoGestion.Models;
 using AutoGestion.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +50,7 @@ namespace AutoGestion.Pages.InspectionAppointments
                 return Page();
             }
 
+            InspectionAppointment.UpdatedAt = DateTime.Now.ToCostaRicaTime();
             await _appointmentRepo.UpdateAsync(InspectionAppointment);
             return RedirectToPage("./Calendar");
         }

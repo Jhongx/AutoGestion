@@ -24,3 +24,4 @@ primary_region = 'dfw'
 [mounts]
   source = "sqlite_data"
   destination = "/app/data"
+  

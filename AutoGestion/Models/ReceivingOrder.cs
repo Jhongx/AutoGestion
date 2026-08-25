@@ -5,15 +5,18 @@ using static AutoGestion.Utilities.Commons.AppConstants;
 
 namespace AutoGestion.Models
 {
-    public class ReceivingOrder
+    public class ReceivingOrder : BaseEntity
     {
         public int Id { get; set; }
 
         public int VehicleId { get; set; }
         public Vehicle? Vehicle { get; set; }
 
-        public DateTime DateTime { get; set; } = DateTime.Now;
-        public DateTime EntryDate { get; set; } = DateTime.Now;
+        // Ajustado por defecto a la hora actual de Costa Rica
+        public DateTime DateTime { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("America/Costa_Rica"));
+
+        // Ajustado por defecto a la hora actual de Costa Rica
+        public DateTime EntryDate { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("America/Costa_Rica"));
 
         public int Mileage { get; set; }
 

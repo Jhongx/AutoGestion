@@ -2,7 +2,7 @@
 
 namespace AutoGestion.Models
 {
-    public class Inventory
+    public class Inventory : BaseEntity
     {
         public int Id { get; set; }
 
