@@ -13,9 +13,26 @@
         return cleanEvt;
     });
 
+    // Función auxiliar para marcar visualmente el día seleccionado en la grilla
+    function highlightSelectedDay(dateStr) {
+        // Remover la selección previa de cualquier otro día
+        document.querySelectorAll('.fc-daygrid-day').forEach(function (cell) {
+            cell.classList.remove('fc-day-selected');
+        });
+
+        // Buscar la celda correspondiente a la fecha en formato YYYY-MM-DD y agregarle la clase
+        var targetCell = document.querySelector(`.fc-daygrid-day[data-date="${dateStr}"]`);
+        if (targetCell) {
+            targetCell.classList.add('fc-day-selected');
+        }
+    }
+
     function renderSidePanel(dateStr) {
         var listContainer = document.getElementById('sidePanelOrdersList');
         if (!listContainer) return;
+
+        // Resaltar visualmente la celda en el calendario
+        highlightSelectedDay(dateStr);
 
         listContainer.innerHTML = '';
         var dateParts = dateStr.split('-');
@@ -40,7 +57,6 @@
             var props = evt.extendedProps || {};
             var detailsUrl = evt.url || `/InspectionAppointments/Details?id=${evt.id}`;
 
-            // Construcción condicional del botón de recepción según la propiedad canReceive del backend
             var receiveButtonHtml = '';
             if (props.canReceive) {
                 receiveButtonHtml = `
@@ -49,7 +65,6 @@
                     </a>`;
             }
 
-            // Si ya está convertida, el botón de detalle toma todo el ancho disponible
             var detailsButtonClass = props.canReceive ? 'w-50' : 'w-100';
 
             var cardHtml = `

@@ -72,9 +72,9 @@
                                 <span asp-validation-for="ReceivingOrder.DateTime" class="text-danger small"></span>
                             </div>
 
-                            <!-- Kilometraje Actual -->
+                            <!-- Kilometraje Actual (Ahora Opcional) -->
                             <div class="col-md-6">
-                                <label asp-for="ReceivingOrder.Mileage" class="form-label fw-semibold text-dark">Kilometraje Actual <span class="text-danger">*</span></label>
+                                <label asp-for="ReceivingOrder.Mileage" class="form-label fw-semibold text-dark">Kilometraje Actual</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="bi bi-speedometer2"></i></span>
                                     <input asp-for="ReceivingOrder.Mileage" class="form-control" placeholder="Ej: 85000" />
@@ -115,10 +115,10 @@
                                 <span asp-validation-for="ReceivingOrder.FuelLevelId" class="text-danger small"></span>
                             </div>
 
-                            <!-- Observaciones del Cliente / Descripción del Problema -->
+                            <!-- Fallas Reportadas y Observaciones del Cliente (Opcional) -->
                             <div class="col-12">
                                 <label asp-for="ReceivingOrder.ProblemDescription" class="form-label fw-semibold text-dark">
-                                    Fallas Reportadas y Observaciones del Cliente <span class="text-danger">*</span>
+                                    Fallas Reportadas y Observaciones del Cliente
                                 </label>
                                 <textarea asp-for="ReceivingOrder.ProblemDescription" class="form-control" rows="4" placeholder="Describa detalladamente los síntomas, ruidos o notas particulares de entrega..."></textarea>
                                 <span asp-validation-for="ReceivingOrder.ProblemDescription" class="text-danger small"></span>

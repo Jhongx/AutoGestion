@@ -13,15 +13,14 @@ namespace AutoGestion.Models
         [Required(ErrorMessage = "El apellido es obligatorio")]
         [StringLength(75)]
         public string LastName { get; set; } = string.Empty;
-        // Relación con Tipo de Documento
-        [Required(ErrorMessage = "El tipo de documento es obligatorio")]
-        public int DocTypeId { get; set; }
-        [ValidateNever] // Evita que ModelState pida validar el objeto DocType completo
+        // Relación con Tipo de Documento (Ahora opcional)
+        public int? DocTypeId { get; set; }
+        [ValidateNever]
         public DocType? DocType { get; set; }
 
-        [Required(ErrorMessage = "La cédula o identificación es obligatoria")]
+        // Identificación (Ahora opcional)
         [StringLength(20)]
-        public string Identification { get; set; } = string.Empty;
+        public string? Identification { get; set; }
 
         [Required(ErrorMessage = "El teléfono principal es obligatorio")]
         [StringLength(15)]

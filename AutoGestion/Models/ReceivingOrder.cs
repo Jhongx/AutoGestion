@@ -18,7 +18,7 @@ namespace AutoGestion.Models
         // Ajustado por defecto a la hora actual de Costa Rica
         public DateTime EntryDate { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("America/Costa_Rica"));
 
-        public int Mileage { get; set; }
+        public int? Mileage { get; set; }
 
         // ==========================================
         // CATÁLOGO: FUEL LEVEL (Nivel de Combustible)
@@ -32,7 +32,7 @@ namespace AutoGestion.Models
         [StringLength(100)]
         public string ServiceType { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "La descripción del problema es obligatoria")]
+        [StringLength(1000)]
         public string ProblemDescription { get; set; } = string.Empty;
 
         // ==========================================
