@@ -1,10 +1,12 @@
 using AutoGestion.Data;
 using AutoGestion.Models;
 using AutoGestion.Repositories.Interfaces;
+using AutoGestion.Utilities.Commons;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using static AutoGestion.Utilities.Commons.AppConstants;
 
 namespace AutoGestion.Pages.ReceivingOrderPages;
 
@@ -66,7 +68,8 @@ public class CreateModel : PageModel
         {
             DateTime = DateTime.Now,
             VehicleId = vehicleId ?? 0,
-            ProblemDescription = reason ?? string.Empty
+            ProblemDescription = reason ?? string.Empty,
+            Status = AppConstants.ReceivingOrderStatusDisplayNames.DisplayNames[ReceivingOrderStatus.Pending].Name // Guarda "Pendiente"
         };
 
         // 3. Cargamos las listas desplegables (ahora ReceivingOrder.VehicleId ya tiene valor, por lo que el SelectList lo marcará como seleccionado)

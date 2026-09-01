@@ -1,4 +1,6 @@
-﻿namespace AutoGestion.Utilities.Commons
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace AutoGestion.Utilities.Commons
 {
     public static class AppConstants
     {
@@ -40,24 +42,6 @@
         };
         }
 
-        public static class FuelLevelDisplayNames
-        {
-            public const string Reserve = "Reserva";
-            public const string Quarter = "1/4";
-            public const string Half = "1/2";
-            public const string ThreeQuarters = "3/4";
-            public const string Full = "Lleno";
-
-            public static readonly Dictionary<FuelLevel, string> DisplayNames = new()
-        {
-            { FuelLevel.Reserve, "Reserva" },
-            { FuelLevel.Quarter, "1/4" },
-            { FuelLevel.Half, "1/2" },
-            { FuelLevel.ThreeQuarters, "3/4" },
-            { FuelLevel.Full, "Lleno" }
-        };
-        }
-
         // ============ STRING LENGTHS ============
         public static class StringLengths
         {
@@ -79,6 +63,81 @@
             public const int Name = 100;
         }
 
+
+
+        // ============ DEFAULT VALUES ============
+        public static class DefaultValues
+        {
+            public const int CurrentYear = 2026; // O puedes usar DateTime.Now.Year
+        }
+
+        public enum MovementType
+        {
+            Inbound,  // Ingreso de stock / Compra
+            Outbound  // Salida de stock / Venta
+        }
+
+        public enum ReceivingOrderStatus
+        {
+            Pending,     // Pendiente de diagnóstico / revisión
+            InProgress,  // En proceso de reparación
+            Completed,   // Finalizado / Listo para entrega
+            Delivered    // Entregado al cliente
+        }
+
+        public static class ReceivingOrderStatusDisplayNames
+        {
+            public static readonly Dictionary<ReceivingOrderStatus, (string Name, string BadgeClass)> DisplayNames = new()
+            {
+                { ReceivingOrderStatus.Pending, ("Pendiente", "bg-warning text-dark border border-warning-subtle") },
+                { ReceivingOrderStatus.InProgress, ("En Proceso", "bg-info text-dark border border-info-subtle") },
+                { ReceivingOrderStatus.Completed, ("Completado", "bg-success text-white") },
+                { ReceivingOrderStatus.Delivered, ("Entregado", "bg-secondary text-white") }
+            };
+
+            // Método auxiliar por si guardas el estado como texto plano en la BD
+            public static (string Name, string BadgeClass) GetInfo(string? status)
+            {
+                if (Enum.TryParse<ReceivingOrderStatus>(status, out var parsed))
+                {
+                    return DisplayNames.TryGetValue(parsed, out var info) ? info : (status ?? "Desconocido", "bg-light text-dark border");
+                }
+                // Fallback por si el texto no coincide exactamente con el enum
+                return (string.IsNullOrWhiteSpace(status) ? "Pendiente" : status, "bg-light text-dark border");
+            }
+        }
+
+        // NUEVO: Catálogo centralizado de Tipos de Servicio
+        public enum ServiceTypeCategory
+        {
+            RutinaryMaintenance,
+            EngineDiagnostic,
+            InjectionLaboratory,
+            AutomotiveElectricity,
+            AirConditioning,
+            BrakesSuspension
+        }
+
+        public static class ServiceTypeDisplayNames
+        {
+            public static readonly Dictionary<ServiceTypeCategory, string> Options = new()
+            {
+                { ServiceTypeCategory.RutinaryMaintenance, "Mantenimiento Rutinario" },
+                { ServiceTypeCategory.EngineDiagnostic, "Diagnóstico / Falla Motor" },
+                { ServiceTypeCategory.InjectionLaboratory, "Inyección / Laboratorio" },
+                { ServiceTypeCategory.AutomotiveElectricity, "Electricidad Automotriz" },
+                { ServiceTypeCategory.AirConditioning, "Aire Acondicionado" },
+                { ServiceTypeCategory.BrakesSuspension, "Frenos / Suspensión" }
+            };
+
+            // Método auxiliar para poblar SelectLists fácilmente en tus PageModels
+            public static SelectList GetSelectList(string? selectedValue = null)
+            {
+                var list = Options.Values.Select(v => new { Value = v, Text = v });
+                return new SelectList(list, "Value", "Text", selectedValue);
+            }
+        }
+
         // ============ VALIDATION MESSAGES ============
         public static class ValidationMessages
         {
@@ -87,10 +146,7 @@
             public const string MaxLengthExceeded = "La longitud máxima permitida es de {0} caracteres";
         }
 
-        // ============ DEFAULT VALUES ============
-        public static class DefaultValues
-        {
-            public const int CurrentYear = 2026; // O puedes usar DateTime.Now.Year
-        }
+
+
     }
 }

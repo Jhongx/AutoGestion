@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = $"Editar Orden #{Model.ReceivingOrder.Id:D5}";
 }
+@using AutoGestion.Helpers
+@using AutoGestion.Utilities.Commons
+
 <div class="container-fluid px-4 py-3">
     <!-- Breadcrumb & Encabezado -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -54,7 +57,7 @@
                                 <span asp-validation-for="ReceivingOrder.VehicleId" class="text-danger small"></span>
                             </div>
 
-                            <!-- Info Card del Propietario (Limpia y sutil) -->
+                            <!-- Info Card del Propietario -->
                             <div class="col-md-6">
                                 <div class="card bg-light border-0 h-100 p-2 d-flex justify-content-center" id="clientInfoCard">
                                     <div class="d-flex align-items-center gap-2 text-muted px-2">
@@ -67,19 +70,13 @@
                                 </div>
                             </div>
 
-                            <!-- Tipo de Servicio -->
+                            <!-- Tipo de Servicio (Centralizado desde Constantes) -->
                             <div class="col-md-6">
                                 <label asp-for="ReceivingOrder.ServiceType" class="form-label fw-semibold text-dark">Tipo de Servicio <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="bi bi-tools"></i></span>
-                                    <select asp-for="ReceivingOrder.ServiceType" class="form-select">
+                                    <select asp-for="ReceivingOrder.ServiceType" class="form-select" asp-items="AppConstants.ServiceTypeDisplayNames.GetSelectList(Model.ReceivingOrder.ServiceType)">
                                         <option value="">-- Seleccione la categoría --</option>
-                                        <option value="Mantenimiento Rutinario">Mantenimiento Rutinario</option>
-                                        <option value="Diagnóstico / Falla Motor">Diagnóstico / Falla Motor</option>
-                                        <option value="Inyección / Laboratorio">Inyección / Laboratorio</option>
-                                        <option value="Electricidad Automotriz">Electricidad Automotriz</option>
-                                        <option value="Aire Acondicionado">Aire Acondicionado</option>
-                                        <option value="Frenos / Suspensión">Frenos / Suspensión</option>
                                     </select>
                                 </div>
                                 <span asp-validation-for="ReceivingOrder.ServiceType" class="text-danger small"></span>
@@ -95,7 +92,7 @@
                                 <span asp-validation-for="ReceivingOrder.DateTime" class="text-danger small"></span>
                             </div>
 
-                            <!-- Kilometraje Actual (Ahora Opcional) -->
+                            <!-- Kilometraje Actual -->
                             <div class="col-md-6">
                                 <label asp-for="ReceivingOrder.Mileage" class="form-label fw-semibold text-dark">Kilometraje Actual</label>
                                 <div class="input-group">
@@ -106,7 +103,7 @@
                                 <span asp-validation-for="ReceivingOrder.Mileage" class="text-danger small"></span>
                             </div>
 
-                            <!-- Nivel de Combustible (Enlazado al Catálogo FuelLevel) -->
+                            <!-- Nivel de Combustible -->
                             <div class="col-md-6">
                                 <label asp-for="ReceivingOrder.FuelLevelId" class="form-label fw-semibold text-dark">
                                     <i class="bi bi-fuel-pump me-1 text-danger"></i>Nivel de Combustible <span class="text-danger">*</span>
@@ -120,22 +117,25 @@
                                 <span asp-validation-for="ReceivingOrder.FuelLevelId" class="text-danger small"></span>
                             </div>
 
-                            <!-- Estado del Trabajo -->
+                            <!-- Estado del Servicio (Centralizado desde Constantes) -->
                             <div class="col-md-6">
                                 <label asp-for="ReceivingOrder.Status" class="form-label fw-semibold text-dark">Estado del Servicio</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="bi bi-flag"></i></span>
                                     <select asp-for="ReceivingOrder.Status" class="form-select">
-                                        <option value="Pendiente">Pendiente</option>
-                                        <option value="En Proceso">En Proceso</option>
-                                        <option value="Completado">Completado</option>
-                                        <option value="Entregado">Entregado</option>
+                                        @foreach (var statusItem in AppConstants.ReceivingOrderStatusDisplayNames.DisplayNames)
+                                        {
+                                            // Dependiendo de si guardas el nombre en español ("Pendiente") o el Enum ("Pending"),
+                                            // ajusta la comparación. Aquí usamos statusItem.Value.Name asumiendo texto en español.
+                                            var optionValue = statusItem.Value.Name;
+                                            <option value="@optionValue">@optionValue</option>
+                                        }
                                     </select>
                                 </div>
                                 <span asp-validation-for="ReceivingOrder.Status" class="text-danger small"></span>
                             </div>
 
-                            <!-- Descripción del Problema (Ahora Opcional) -->
+                            <!-- Descripción del Problema -->
                             <div class="col-12">
                                 <label asp-for="ReceivingOrder.ProblemDescription" class="form-label fw-semibold text-dark">
                                     Descripción del Problema y Observaciones del Cliente

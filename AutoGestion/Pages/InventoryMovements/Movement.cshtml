@@ -1,0 +1,92 @@
+﻿@page
+@model AutoGestion.Pages.InventoryMovements.MovementModel
+@{
+    ViewData["Title"] = Model.Input.Type == AutoGestion.Utilities.Commons.AppConstants.MovementType.Inbound
+        ? "Registrar Entrada de Repuesto"
+        : "Registrar Salida de Repuesto";
+}
+
+<div class="container-fluid px-2 px-md-4 py-3" style="max-width: 800px;">
+    <!-- Encabezado -->
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a asp-page="/Index" class="text-decoration-none">Inicio</a></li>
+                <li class="breadcrumb-item"><a asp-page="/Inventories/Index" class="text-decoration-none">Inventario</a></li>
+                <li class="breadcrumb-item active">Movimiento</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold text-dark mb-1 h3">
+            <i class="bi bi-arrow-left-right text-primary me-2"></i>@ViewData["Title"]
+        </h2>
+        <p class="text-muted small mb-0">Complete los datos para actualizar el stock actual en el taller.</p>
+    </div>
+
+    <!-- Formulario -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger small py-2 mb-3" role="alert"></div>
+
+                <div class="row g-3">
+                    <!-- Tipo de Movimiento -->
+                    <div class="col-md-6">
+                        <label asp-for="Input.Type" class="form-label fw-semibold small">Tipo de Movimiento</label>
+                        <select asp-for="Input.Type" class="form-select bg-light">
+                            <option value="Inbound">Entrada (Compra / Ingreso)</option>
+                            <option value="Outbound">Salida (Venta / Taller)</option>
+                        </select>
+                        <span asp-validation-for="Input.Type" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Selección de Repuesto -->
+                    <div class="col-md-6">
+                        <label asp-for="Input.InventoryId" class="form-label fw-semibold small">Repuesto / Artículo</label>
+                        <select asp-for="Input.InventoryId" asp-items="Model.InventoryOptions" class="form-select bg-light">
+                            <option value="">-- Seleccione un artículo --</option>
+                        </select>
+                        <span asp-validation-for="Input.InventoryId" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Cantidad -->
+                    <div class="col-md-6">
+                        <label asp-for="Input.Quantity" class="form-label fw-semibold small">Cantidad</label>
+                        <input asp-for="Input.Quantity" type="number" min="1" class="form-control bg-light" />
+                        <span asp-validation-for="Input.Quantity" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Precio Unitario -->
+                    <div class="col-md-6">
+                        <label asp-for="Input.UnitPrice" class="form-label fw-semibold small">Precio Unitario (Costo o Venta)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted">₡</span>
+                            <input asp-for="Input.UnitPrice" type="number" step="0.01" class="form-control bg-light" />
+                        </div>
+                        <span asp-validation-for="Input.UnitPrice" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Referencia -->
+                    <div class="col-12">
+                        <label asp-for="Input.Reference" class="form-label fw-semibold small">Referencia / Motivo</label>
+                        <input asp-for="Input.Reference" class="form-control bg-light" placeholder="Ej. Factura #102 o Instalación en Vehículo X" />
+                        <span asp-validation-for="Input.Reference" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                    <a asp-page="/Inventories/Index" class="btn btn-outline-secondary fw-semibold shadow-sm">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary fw-semibold shadow-sm">
+                        <i class="bi bi-check-lg me-1"></i> Registrar Movimiento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

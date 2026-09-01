@@ -111,7 +111,21 @@
         </div>
     </footer>
 
-    <!-- jQuery y Bootstrap JS vía CDN -->
+    <!-- Carga primero la librería de SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Si hay configuración pendiente en TempData, la inyectamos como variable global de JS -->
+    @if (TempData["SwalConfig"] != null)
+    {
+        <script>
+                window.swalConfigData = @Html.Raw(TempData["SwalConfig"]);
+        </script>
+    }
+
+    <!-- Referencia a tu script global de alertas (ahora procesará window.swalConfigData) -->
+    <script src="~/js/Utilities/alerts.js" asp-append-version="true"></script>
+
+    <!-- jQuery, Bootstrap JS y demás scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
