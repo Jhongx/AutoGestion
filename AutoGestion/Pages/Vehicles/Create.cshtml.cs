@@ -22,9 +22,12 @@ public class CreateModel : PageModel
     [BindProperty]
     public Vehicle Vehicle { get; set; } = default!;
 
+    [BindProperty(SupportsGet = true)]
+    public int? ClientId { get; set; } // Parámetro opcional que viene por la URL
+
     public async Task<IActionResult> OnGetAsync()
     {
-        await LoadClientsSelectListAsync();
+        await LoadClientsSelectListAsync(ClientId);
         return Page();
     }
 
@@ -43,17 +46,19 @@ public class CreateModel : PageModel
         return RedirectToPage("./Index");
     }
 
-    private async Task LoadClientsSelectListAsync()
+    private async Task LoadClientsSelectListAsync(int? selectedClientId = null)
     {
         var clients = await _clientRepository.GetAllAsync();
 
+        // Si viene un ClientId por URL, lo asignamos como seleccionado en el SelectList
         ViewData["ClientId"] = new SelectList(
             clients.Select(c => new {
                 c.Id,
                 FullName = c.FullName
             }),
             "Id",
-            "FullName"
+            "FullName",
+            selectedClientId
         );
     }
 }

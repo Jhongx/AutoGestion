@@ -1,4 +1,5 @@
 using AutoGestion.Data;
+using AutoGestion.Helpers;
 using AutoGestion.Models;
 using AutoGestion.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -32,12 +33,22 @@ public class CreateModel : PageModel
     {
         if (!ModelState.IsValid)
         {
-            // Si la validación falla, recargamos la lista desplegable antes de retornar la vista
             await LoadDocTypesSelectListAsync();
             return Page();
         }
 
         await _clientRepository.AddAsync(Client);
+
+        // Activamos la alerta interactiva preguntando por el vehículo
+        SweetAlertHelper.ShowConfirm(
+            TempData,
+            title: "¡Cliente Registrado!",
+            text: "¿Deseas asignarle un vehículo a este cliente ahora mismo?",
+            confirmButtonText: "Sí, registrar vehículo",
+            cancelButtonText: "No, ir al listado",
+            confirmRedirectUrl: $"/Vehicles/Create?clientId={Client.Id}", // Pasamos el ID por parámetro
+            cancelRedirectUrl: "./Index"
+        );
 
         return RedirectToPage("./Index");
     }

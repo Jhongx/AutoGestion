@@ -18,6 +18,7 @@ namespace AutoGestion.Data
         public DbSet<ReceivingOrder> ReceivingOrders => Set<ReceivingOrder>();
         public DbSet<Inventory> Inventories => Set<Inventory>();
         public DbSet<InspectionAppointment> InspectionAppointments => Set<InspectionAppointment>();
+        public DbSet<InventoryMovement> InventoryMovements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,8 +31,9 @@ namespace AutoGestion.Data
                 .IsUnique();
 
             modelBuilder.Entity<Client>()
-                .HasIndex(c => c.Identification)
-                .IsUnique();
+                .HasIndex(c => new { c.CompanyId, c.Identification })
+                .IsUnique()
+                .HasFilter("[IsActive] = 0"); // SQL Server syntax para Soft Delete activo
 
             modelBuilder.Entity<Vehicle>()
                 .HasIndex(v => v.LicensePlate)

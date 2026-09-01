@@ -3,7 +3,7 @@ using AutoGestion.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.DataProtection; // <-- 1. IMPORTAR ESTE NAMESPACE
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +45,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true; // Renueva el día si el usuario sigue activo
 });
 
-// <-- 2. CONFIGURAR DATA PROTECTION PARA PRODUCCIÓN (EN EL VOLUMEN PERSISTENTE) -->
+// Configurar Data Protection para producción (en el volumen persistente)
 if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddDataProtection()
@@ -61,7 +61,7 @@ builder.Services.AddRazorPages(options =>
 
 var app = builder.Build();
 
-// 1. Asegurar que la carpeta para SQLite y llaves exista en el servidor (Fly.io)
+// Asegurar que la carpeta para SQLite y llaves exista en el servidor (Fly.io)
 if (!app.Environment.IsDevelopment())
 {
     var dataDirectory = "/app/data";
@@ -70,7 +70,6 @@ if (!app.Environment.IsDevelopment())
         Directory.CreateDirectory(dataDirectory);
     }
 
-    // Opcional: Asegurar subcarpeta de keys
     var keysDirectory = "/app/data/keys";
     if (!Directory.Exists(keysDirectory))
     {
@@ -78,19 +77,22 @@ if (!app.Environment.IsDevelopment())
     }
 }
 
-// Procesa el tráfico HTTPS del proxy inverso de Fly.io antes de cualquier otra regla
+// 1. PRIMERO DE TODO: Procesa el tráfico y cabeceras HTTPS del proxy inverso de Fly.io
 app.UseForwardedHeaders();
 
-// 2. Aplicar migraciones automáticas e inicializar catálogos
-using (var scope = app.Services.CreateScope())
+// 2. Aplicar migraciones automáticas e inicializar catálogos SOLO EN PRODUCCIÓN
+if (!app.Environment.IsDevelopment())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-    // 1. Aplica migraciones / crea tablas
-    dbContext.Database.Migrate();
+        // 1. Aplica migraciones / crea tablas
+        dbContext.Database.Migrate();
 
-    // 2. Poblar catálogos si están vacíos
-    DbInitializer.Seed(dbContext);
+        // 2. Poblar catálogos si están vacíos
+        DbInitializer.Seed(dbContext);
+    }
 }
 
 if (!app.Environment.IsDevelopment())

@@ -4,6 +4,7 @@
     ViewData["Title"] = "Nueva Orden de Recepción";
 }
 @using AutoGestion.Helpers
+@using AutoGestion.Utilities.Commons
 
 <div class="container-fluid px-4 py-3">
     <!-- Breadcrumb & Encabezado -->
@@ -49,7 +50,7 @@
                                 <span asp-validation-for="ReceivingOrder.VehicleId" class="text-danger small"></span>
                             </div>
 
-                            <!-- Info Card del Propietario (Limpia y sutil) -->
+                            <!-- Info Card del Propietario -->
                             <div class="col-md-6">
                                 <div class="card bg-light border-0 h-100 p-2 d-flex justify-content-center" id="clientInfoCard">
                                     <div class="d-flex align-items-center gap-2 text-muted px-2">
@@ -72,7 +73,7 @@
                                 <span asp-validation-for="ReceivingOrder.DateTime" class="text-danger small"></span>
                             </div>
 
-                            <!-- Kilometraje Actual (Ahora Opcional) -->
+                            <!-- Kilometraje Actual -->
                             <div class="col-md-6">
                                 <label asp-for="ReceivingOrder.Mileage" class="form-label fw-semibold text-dark">Kilometraje Actual</label>
                                 <div class="input-group">
@@ -83,22 +84,35 @@
                                 <span asp-validation-for="ReceivingOrder.Mileage" class="text-danger small"></span>
                             </div>
 
-                            <!-- Categorización del Trabajo / Tipo de Servicio -->
+                            <!-- Tipo de Servicio (Desde Constantes) -->
                             <div class="col-md-6">
                                 <label asp-for="ReceivingOrder.ServiceType" class="form-label fw-semibold text-dark">Tipo de Servicio <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="bi bi-tools"></i></span>
-                                    <select asp-for="ReceivingOrder.ServiceType" class="form-select">
+                                    <select asp-for="ReceivingOrder.ServiceType" class="form-select" asp-items="AppConstants.ServiceTypeDisplayNames.GetSelectList()">
                                         <option value="">-- Seleccione la categoría --</option>
-                                        <option value="Mantenimiento Rutinario">Mantenimiento Rutinario</option>
-                                        <option value="Diagnóstico / Falla Motor">Diagnóstico / Falla Motor</option>
-                                        <option value="Inyección / Laboratorio">Inyección / Laboratorio</option>
-                                        <option value="Electricidad Automotriz">Electricidad Automotriz</option>
-                                        <option value="Aire Acondicionado">Aire Acondicionado</option>
-                                        <option value="Frenos / Suspensión">Frenos / Suspensión</option>
                                     </select>
                                 </div>
                                 <span asp-validation-for="ReceivingOrder.ServiceType" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Estado inicial de la orden (NUEVO) -->
+                            <div class="col-md-6">
+                                <label asp-for="ReceivingOrder.Status" class="form-label fw-semibold text-dark">
+                                    <i class="bi bi-flag me-1 text-primary"></i>Estado Inicial <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-check-circle"></i></span>
+                                    <select asp-for="ReceivingOrder.Status" class="form-select">
+                                        <option value="@AppConstants.ReceivingOrderStatusDisplayNames.DisplayNames[AppConstants.ReceivingOrderStatus.Pending].Name">
+                                            @AppConstants.ReceivingOrderStatusDisplayNames.DisplayNames[AppConstants.ReceivingOrderStatus.Pending].Name
+                                        </option>
+                                        <option value="@AppConstants.ReceivingOrderStatusDisplayNames.DisplayNames[AppConstants.ReceivingOrderStatus.InProgress].Name">
+                                            @AppConstants.ReceivingOrderStatusDisplayNames.DisplayNames[AppConstants.ReceivingOrderStatus.InProgress].Name
+                                        </option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="ReceivingOrder.Status" class="text-danger small"></span>
                             </div>
 
                             <!-- Nivel de Combustible -->
@@ -115,7 +129,7 @@
                                 <span asp-validation-for="ReceivingOrder.FuelLevelId" class="text-danger small"></span>
                             </div>
 
-                            <!-- Fallas Reportadas y Observaciones del Cliente (Opcional) -->
+                            <!-- Fallas Reportadas y Observaciones del Cliente -->
                             <div class="col-12">
                                 <label asp-for="ReceivingOrder.ProblemDescription" class="form-label fw-semibold text-dark">
                                     Fallas Reportadas y Observaciones del Cliente
@@ -149,12 +163,10 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const vehicleSelect = document.getElementById("vehicleSelect");
-            // Si hay un vehículo preseleccionado (ej. al venir desde una cita),
-            // disparamos el evento change para que el script externo cargue los datos del cliente en la tarjeta.
             if (vehicleSelect && vehicleSelect.value) {
                 const event = new Event('change');
                 vehicleSelect.dispatchEvent(event);
-            }
-        });
+                    }
+                });
     </script>
 }
