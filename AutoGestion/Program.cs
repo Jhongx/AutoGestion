@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.DataProtection;
 
+// Habilita el comportamiento legacy de timestamps para Npgsql (vital para SQLite -> PostgreSQL)
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuración de Forwarded Headers para Fly.io
@@ -19,8 +22,10 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+// MODIFICACIÓN CLAVE: Cambiamos UseSqlite por UseNpgsql para PostgreSQL (Neon DB) y agregamos Ignore para PendingModelChangesWarning
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseNpgsql(connectionString)
+           .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
 // Registra automáticamente todos los repositorios y servicios del proyecto
 builder.Services.AddRepositoriesAuto();
@@ -61,15 +66,9 @@ builder.Services.AddRazorPages(options =>
 
 var app = builder.Build();
 
-// Asegurar que la carpeta para SQLite y llaves exista en el servidor (Fly.io)
+// Asegurar que la carpeta de llaves de seguridad exista en el servidor (Fly.io)
 if (!app.Environment.IsDevelopment())
 {
-    var dataDirectory = "/app/data";
-    if (!Directory.Exists(dataDirectory))
-    {
-        Directory.CreateDirectory(dataDirectory);
-    }
-
     var keysDirectory = "/app/data/keys";
     if (!Directory.Exists(keysDirectory))
     {
@@ -87,7 +86,7 @@ if (!app.Environment.IsDevelopment())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        // 1. Aplica migraciones / crea tablas
+        // 1. Aplica migraciones / crea tablas en PostgreSQL
         dbContext.Database.Migrate();
 
         // 2. Poblar catálogos si están vacíos
