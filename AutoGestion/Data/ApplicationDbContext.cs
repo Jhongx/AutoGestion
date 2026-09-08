@@ -33,8 +33,7 @@ namespace AutoGestion.Data
             modelBuilder.Entity<Client>()
                 .HasIndex(c => new { c.CompanyId, c.Identification })
                 .IsUnique()
-                .HasFilter("[IsActive] = 0"); // SQL Server syntax para Soft Delete activo
-
+                .HasFilter("\"IsActive\" = false"); // O la sintaxis estándar de Postgres para filtros de índices
             modelBuilder.Entity<Vehicle>()
                 .HasIndex(v => v.LicensePlate)
                 .IsUnique();

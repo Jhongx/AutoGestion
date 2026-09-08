@@ -134,8 +134,53 @@ public class RegisterModel : PageModel
                     values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                     protocol: Request.Scheme)!;
 
-                await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                // Plantilla HTML moderna y profesional para Confirmar Cuenta
+                var confirmLink = HtmlEncoder.Default.Encode(callbackUrl);
+                var htmlMessage = $@"
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset=""utf-8"">
+                                <style>
+                                    body {{ font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; }}
+                                    .email-container {{ max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }}
+                                    .email-header {{ background: #212529; color: #ffffff; padding: 20px; text-align: center; }}
+                                    .email-body {{ padding: 30px; color: #333333; line-height: 1.6; }}
+                                    .btn-confirm {{ display: inline-block; background-color: #198754; color: #ffffff !important; text-decoration: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; margin: 20px 0; }}
+                                    .email-footer {{ background: #f8f9fa; padding: 15px; text-align: center; font-size: 12px; color: #6c757d; }}
+                                </style>
+                            </head>
+                            <body>
+                                <div class=""email-container"">
+                                    <div class=""email-header"">
+                                        <h2>AutoGestión</h2>
+                                    </div>
+                                    <div class=""email-body"">
+                                        <p>¡Bienvenido/a!</p>
+                                        <p>Te has registrado exitosamente en <strong>AutoGestión</strong>. Para poder acceder a tu cuenta, por favor confirma tu dirección de correo electrónico haciendo clic en el siguiente botón:</p>
+                                        <div style=""text-align: center;"">
+                                            <a href=""{confirmLink}"" class=""btn-confirm"">Confirmar mi cuenta</a>
+                                        </div>
+                                        <p><small>Si tú no solicitaste esta cuenta, puedes ignorar este mensaje de manera segura.</small></p>
+                                    </div>
+                                    <div class=""email-footer"">
+                                        &copy; {DateTime.Now.Year} AutoGestión. Todos los derechos reservados.
+                                    </div>
+                                </div>
+                            </body>
+                            </html>";
+
+                try
+                {
+                    await _emailSender.SendEmailAsync(
+                        Input.Email,
+                        "Confirma tu cuenta - AutoGestión",
+                        htmlMessage);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
 
                 // Redirige a la pantalla de espera sin iniciar sesión automáticamente
                 return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
