@@ -1,5 +1,5 @@
 ﻿using AutoGestion.Data;
-using AutoGestion.Models;
+using AutoGestion.Models.Inventory;
 using AutoGestion.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +30,9 @@ namespace AutoGestion.Repositories.Implementations
         {
             return await _context.Set<Inventory>()
                 .AsNoTracking()
-                .FirstOrDefaultAsync(i => i.Id == id && i.IsActive);
+                .Include(i => i.InventoryType)   // Carga el catálogo de Tipo
+                .Include(i => i.InventoryBrand)  // Carga el catálogo de Marca
+                .FirstOrDefaultAsync(i => i.Id == id);
         }
 
         // Obtener repuesto por código único (Solo si está activo)

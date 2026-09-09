@@ -1,6 +1,6 @@
 ﻿using AutoGestion.Data;
-using AutoGestion.Models;
 using AutoGestion.Models.Common;
+using AutoGestion.Models.Inventory;
 using AutoGestion.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using static AutoGestion.Utilities.Commons.AppConstants;

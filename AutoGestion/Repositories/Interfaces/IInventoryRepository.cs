@@ -1,4 +1,4 @@
-﻿using AutoGestion.Models;
+﻿using AutoGestion.Models.Inventory;
 
 namespace AutoGestion.Repositories.Interfaces
 {

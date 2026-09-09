@@ -80,18 +80,18 @@ if (!app.Environment.IsDevelopment())
 app.UseForwardedHeaders();
 
 // 2. Aplicar migraciones automáticas e inicializar catálogos SOLO EN PRODUCCIÓN
-if (!app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    // 1. Aplicar migraciones automáticas SOLO EN PRODUCCIÓN (o déjalo condicionado)
+    if (!app.Environment.IsDevelopment())
     {
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        // 1. Aplica migraciones / crea tablas en PostgreSQL
         dbContext.Database.Migrate();
-
-        // 2. Poblar catálogos si están vacíos
-        DbInitializer.Seed(dbContext);
     }
+
+    // 2. Poblar catálogos en cualquier entorno (Desarrollo y Producción)
+    DbInitializer.Seed(dbContext);
 }
 
 if (!app.Environment.IsDevelopment())
