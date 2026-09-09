@@ -33,7 +33,7 @@
                     <div class="row g-3">
                         <!-- Código -->
                         <div class="col-md-6">
-                            <label asp-for="Inventory.Code" class="form-label fw-semibold text-dark">Código de Producto <span class="text-danger">*</span></label>
+                            <label asp-for="Inventory.Code" class="form-label fw-semibold text-dark">Código de Producto</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-barcode"></i></span>
                                 <input asp-for="Inventory.Code" class="form-control" placeholder="Ej: REP-1002" />
@@ -51,6 +51,28 @@
                             <span asp-validation-for="Inventory.Name" class="text-danger small"></span>
                         </div>
 
+                        <!-- Tipo de Repuesto (Catálogo) -->
+                        <div class="col-md-6">
+                            <label asp-for="Inventory.InventoryTypeId" class="form-label fw-semibold text-dark">Tipo de Repuesto <span class="text-muted small">(Opcional)</span></label>
+                            <div class="input-group">
+                                <!-- Ojo: cuando se usa Select2, a veces el input-group requiere un ajuste visual, pero funcionará perfecto -->
+                                <select asp-for="Inventory.InventoryTypeId" asp-items="Model.TypeOptions" class="form-select select2-search" data-placeholder="-- Seleccione un tipo --">
+                                    <option value=""></option> <!-- Importante para que el allowClear funcione bien -->
+                                </select>
+                            </div>
+                            <span asp-validation-for="Inventory.InventoryTypeId" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Marca del Repuesto (Catálogo) -->
+                        <div class="col-md-6">
+                            <label asp-for="Inventory.InventoryBrandId" class="form-label fw-semibold text-dark">Marca <span class="text-muted small">(Opcional)</span></label>
+                            <div class="input-group">
+                                <select asp-for="Inventory.InventoryBrandId" asp-items="Model.BrandOptions" class="form-select select2-search" data-placeholder="-- Seleccione una marca --">
+                                    <option value=""></option> <!-- Importante para que el allowClear funcione bien -->
+                                </select>
+                            </div>
+                            <span asp-validation-for="Inventory.InventoryBrandId" class="text-danger small"></span>
+                        </div>
                         <!-- Stock Inicial -->
                         <div class="col-md-4">
                             <label asp-for="Inventory.CurrentStock" class="form-label fw-semibold text-dark">Stock Inicial <span class="text-danger">*</span></label>
@@ -114,4 +136,24 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <!-- 1. Cargar CSS de Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+    <!-- 2. Cargar JS de Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- 3. Inicializar Select2 en los selects con clase select2 -->
+    <script>
+        $(document).ready(function() {
+            $('.select2-search').select2({
+                theme: 'bootstrap-5',
+                placeholder: function() {
+                    return $(this).data('placeholder');
+                },
+                allowClear: true
+            });
+        });
+    </script>
 }

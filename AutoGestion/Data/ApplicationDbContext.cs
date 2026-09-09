@@ -2,6 +2,7 @@
 using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using AutoGestion.Models.Inventory;
 namespace AutoGestion.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -19,6 +20,8 @@ namespace AutoGestion.Data
         public DbSet<Inventory> Inventories => Set<Inventory>();
         public DbSet<InspectionAppointment> InspectionAppointments => Set<InspectionAppointment>();
         public DbSet<InventoryMovement> InventoryMovements { get; set; }
+        public DbSet<InventoryType> InventoryTypes { get; set; }
+        public DbSet<InventoryBrand> InventoryBrands { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -63,6 +66,10 @@ namespace AutoGestion.Data
                 .WithMany()
                 .HasForeignKey(a => a.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Inventory>()
+            .Property(i => i.Code)
+            .IsRequired(false); // Indica explícitamente que es opcional (NULL)
         }
     }
 }

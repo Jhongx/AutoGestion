@@ -1,4 +1,4 @@
-using AutoGestion.Models;
+using AutoGestion.Models.Inventory;
 using AutoGestion.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

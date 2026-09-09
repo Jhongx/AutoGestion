@@ -1,0 +1,132 @@
+﻿@model AutoGestion.Pages.InventoryPages.DetailsModel
+
+<!-- Encabezado Escritorio -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1 fs-3">
+            <i class="bi bi-box-seam text-primary me-2"></i>Detalles del Repuesto
+        </h2>
+        <p class="text-muted small mb-0">Información completa y estado de stock del producto.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-page="./Index" class="btn btn-outline-secondary py-2 px-3 fw-semibold shadow-sm d-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Volver al Catálogo
+        </a>
+        <a asp-page="./Edit" asp-route-id="@Model.Inventory.Id" class="btn btn-primary py-2 px-3 fw-semibold shadow-sm d-flex align-items-center gap-1">
+            <i class="bi bi-pencil"></i> Editar Producto
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="card-title fw-bold mb-0 text-dark fs-5">
+                    <i class="bi bi-info-circle text-primary me-2"></i>Ficha Técnica
+                </h5>
+                <span class="badge bg-light text-dark border font-monospace px-2.5 py-1 fs-6">
+                    <i class="bi bi-barcode me-1 text-secondary"></i>@Model.Inventory.Code
+                </span>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="row g-4">
+
+                    <div class="col-md-8">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Nombre / Descripción</label>
+                        <span class="fs-5 fw-bold text-dark d-block">@Model.Inventory.Name</span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Estado</label>
+                        <div>
+                            @if (Model.Inventory.IsActive)
+                            {
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1.5 fs-6 rounded-pill">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Activo
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2.5 py-1.5 fs-6 rounded-pill">
+                                    <i class="bi bi-slash-circle-fill me-1"></i>Inactivo
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Tipo de Repuesto</label>
+                        <div class="d-flex align-items-center text-dark fw-semibold">
+                            <i class="bi bi-grid text-primary me-2 fs-5"></i>
+                            <span>@(Model.Inventory.InventoryType?.Name ?? "No especificado")</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Marca</label>
+                        <div class="d-flex align-items-center text-dark fw-semibold">
+                            <i class="bi bi-award text-primary me-2 fs-5"></i>
+                            <span>@(Model.Inventory.InventoryBrand?.Name ?? "No especificada")</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12"><hr class="my-0 text-muted opacity-25" /></div>
+
+                    <div class="col-md-4">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Stock Disponible</label>
+                        <div>
+                            @if (Model.Inventory.CurrentStock <= 0)
+                            {
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle px-2.5 py-1.5 rounded-2">
+                                    <i class="bi bi-x-circle me-1"></i>Agotado (@Model.Inventory.CurrentStock)
+                                </span>
+                            }
+                            else if (Model.Inventory.CurrentStock <= 5)
+                            {
+                                <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle px-2.5 py-1.5 rounded-2">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>Bajo (@Model.Inventory.CurrentStock)
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2.5 py-1.5 rounded-2">
+                                    <i class="bi bi-check-circle me-1"></i>En Stock (@Model.Inventory.CurrentStock)
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Costo Unitario</label>
+                        <span class="fs-5 fw-semibold text-secondary d-block">@Model.Inventory.Cost.ToString("C2")</span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Precio Venta</label>
+                        <span class="fs-5 fw-bold text-primary d-block">@Model.Inventory.UnitPrice.ToString("C2")</span>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="card bg-light border-0 rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small text-uppercase fw-bold d-block" style="font-size: 0.7rem;">Ganancia / Unidad</span>
+                                    <span class="fw-bold text-dark fs-6">@((Model.Inventory.UnitPrice - Model.Inventory.Cost).ToString("C2"))</span>
+                                </div>
+                                <div class="text-end">
+                                    <span class="text-muted small text-uppercase fw-bold d-block" style="font-size: 0.7rem;">Margen Bruto</span>
+                                    <span class="fw-bold text-success fs-6">
+                                        @(Model.Inventory.UnitPrice > 0 ? (((Model.Inventory.UnitPrice - Model.Inventory.Cost) / Model.Inventory.UnitPrice) * 100).ToString("F1") + "%" : "0.0%")
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

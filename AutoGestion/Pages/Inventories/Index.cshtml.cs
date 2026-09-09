@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using AutoGestion.Models;
 using AutoGestion.Data;
 using AutoGestion.Repositories.Interfaces;
+using AutoGestion.Models.Inventory;
 
 namespace AutoGestion.Pages.InventoryPages;
 

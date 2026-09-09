@@ -1,5 +1,5 @@
-﻿using AutoGestion.Models;
-using AutoGestion.Models.Common;
+﻿using AutoGestion.Models.Common;
+using AutoGestion.Models.Inventory;
 using static AutoGestion.Utilities.Commons.AppConstants;
 
 namespace AutoGestion.Repositories.Interfaces

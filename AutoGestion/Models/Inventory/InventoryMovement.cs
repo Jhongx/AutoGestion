@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AutoGestion.Models
+namespace AutoGestion.Models.Inventory
 {
     public class InventoryMovement : BaseEntity
     {

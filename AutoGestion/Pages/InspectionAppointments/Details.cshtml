@@ -20,18 +20,29 @@
                 <span class="badge bg-secondary bg-opacity-10 text-secondary border font-monospace fs-6">#@Model.InspectionAppointment.Id.ToString("D5")</span>
             </div>
         </div>
+        <!-- Botones de Acción Superiores Reordenados -->
         <div class="d-flex align-items-center gap-2 flex-wrap">
+            <!-- 1. Volver al Calendario -->
+            <a asp-page="./Calendar" class="btn btn-sm btn-outline-secondary px-3 py-2 shadow-sm d-flex align-items-center gap-1">
+                <i class="bi bi-arrow-left"></i>
+                <span>Calendario</span>
+            </a>
+
+            <!-- 2. Editar Cita -->
             <a asp-page="./Edit" asp-route-id="@Model.InspectionAppointment.Id" class="btn btn-sm btn-warning fw-semibold px-3 py-2 shadow-sm d-flex align-items-center gap-1">
                 <i class="bi bi-pencil-fill"></i>
                 <span>Editar</span>
             </a>
-            <a asp-page="./Index" class="btn btn-sm btn-outline-secondary px-3 py-2 shadow-sm d-flex align-items-center gap-1">
-                <i class="bi bi-list-ul"></i>
-                <span>Listado</span>
+
+            <!-- 3. Generar PDF -->
+            <a asp-page="./PrintPdf" asp-route-id="@Model.InspectionAppointment.Id" target="_blank" class="btn btn-sm btn-outline-danger fw-semibold px-3 py-2 shadow-sm d-flex align-items-center gap-1">
+                <i class="bi bi-file-earmark-pdf-fill"></i>
+                <span>PDF</span>
             </a>
-            <a asp-page="./Calendar" class="btn btn-sm btn-outline-secondary px-3 py-2 shadow-sm d-flex align-items-center gap-1">
-                <i class="bi bi-arrow-left"></i>
-                <span>Calendario</span>
+
+            <!-- 4. Listado (Único botón sin texto, solo ícono) -->
+            <a asp-page="./Index" class="btn btn-sm btn-outline-secondary px-3 py-2 shadow-sm d-flex align-items-center justify-content-center" title="Ver Listado" style="width: 38px; height: 38px;">
+                <i class="bi bi-list-ul fs-6"></i>
             </a>
         </div>
     </div>
